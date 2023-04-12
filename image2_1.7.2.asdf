@@ -1,0 +1,146 @@
+#ASDF 1.0.0
+#ASDF_STANDARD 1.5.0
+%YAML 1.1
+%TAG ! tag:stsci.edu:asdf/
+--- !core/asdf-1.1.0
+asdf_library: !core/software-1.0.0 {author: The ASDF Developers, homepage: 'http://github.com/asdf-format/asdf',
+  name: asdf, version: 2.13.0}
+history:
+  extensions:
+  - !core/extension_metadata-1.0.0
+    extension_class: asdf.extension.BuiltinExtension
+    software: !core/software-1.0.0 {name: asdf, version: 2.13.0}
+class: jwst.pipeline.calwebb_image2.Image2Pipeline
+meta:
+  author: <SPECIFY>
+  date: '2022-10-03T15:46:38'
+  description: Parameters for calibration step jwst.pipeline.calwebb_image2.Image2Pipeline
+  instrument: {name: <SPECIFY>}
+  origin: <SPECIFY>
+  pedigree: <SPECIFY>
+  reftype: <SPECIFY>
+  telescope: <SPECIFY>
+  useafter: <SPECIFY>
+name: Image2Pipeline
+parameters:
+  input_dir: calibrated
+  output_dir: calibrated
+  output_ext: .fits
+  output_file: null
+  output_use_index: true
+  output_use_model: false
+  post_hooks: []
+  pre_hooks: []
+  save_bsub: false
+  save_results: true
+  search_output_file: true
+  skip: false
+  suffix: null
+steps:
+- class: jwst.background.background_step.BackgroundStep
+  name: bkg_subtract
+  parameters:
+    input_dir: calibrated
+    maxiters: null
+    output_dir: null
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    save_combined_background: false
+    save_results: false
+    search_output_file: true
+    sigma: 3.0
+    skip: false
+    suffix: null
+    wfss_mmag_extract: null
+- class: jwst.assign_wcs.assign_wcs_step.AssignWcsStep
+  name: assign_wcs
+  parameters:
+    input_dir: calibrated
+    output_dir: null
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    save_results: false
+    search_output_file: true
+    sip_approx: true
+    sip_degree: null
+    sip_inv_degree: null
+    sip_max_inv_pix_error: 0.25
+    sip_max_pix_error: 0.25
+    sip_npoints: 32
+    skip: false
+    slit_y_high: 0.55
+    slit_y_low: -0.55
+    suffix: null
+- class: jwst.flatfield.flat_field_step.FlatFieldStep
+  name: flat_field
+  parameters:
+    input_dir: calibrated
+    inverse: false
+    output_dir: null
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    save_interpolated_flat: false
+    save_results: false
+    search_output_file: true
+    skip: false
+    suffix: null
+    user_supplied_flat: null
+- class: jwst.photom.photom_step.PhotomStep
+  name: photom
+  parameters:
+    input_dir: calibrated
+    inverse: false
+    output_dir: null
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    save_results: false
+    search_output_file: true
+    skip: false
+    source_type: null
+    suffix: null
+- class: jwst.resample.resample_step.ResampleStep
+  name: resample
+  parameters:
+    allowed_memory: null
+    blendheaders: true
+    crpix: null
+    crval: null
+    fillval: INDEF
+    in_memory: true
+    input_dir: calibrated
+    kernel: square
+    output_dir: null
+    output_ext: .fits
+    output_file: null
+    output_shape: null
+    output_use_index: true
+    output_use_model: false
+    pixel_scale: null
+    pixel_scale_ratio: 1.0
+    pixfrac: 1.0
+    post_hooks: []
+    pre_hooks: []
+    rotation: null
+    save_results: false
+    search_output_file: true
+    single: false
+    skip: true
+    suffix: null
+    weight_type: ivm
+...
