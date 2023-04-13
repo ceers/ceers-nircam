@@ -133,7 +133,8 @@ export CRDS_CONTEXT=jwst_0989.pmap
 ```
 
 
-## Downloading the data
+<a name='download'></a>
+## Downloading Data
 
 You can download data from the MAST web portal or using Astropy astroquery.
 
@@ -183,7 +184,7 @@ where the output product is a single mosaic per filter combining all images
 and dithers.
 
 We have created our own procedures for astrometric alignment, sky subtraction,
-and rescaling the variance maps. See [stage2.md](stage2.md) for more 
+and rescaling the variance maps. See [stage3.md](stage3.md) for more 
 information.
 
 
