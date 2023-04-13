@@ -34,4 +34,9 @@ the command line `strun` method. In `image2_1.7.2.asdf`, we have turned off
 the Resample step (which produces a rectified, distortion-corrected image 
 for quick-look use) to save time. 
 
+**Customization Options:**
+
+Within `image3_part1.asdf`:
+* Input/output: The input and output directory locations can be changed via
+  the `input_dir` and `output_dir` parameters. 
 

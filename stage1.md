@@ -60,7 +60,8 @@ Running the step on a single image:
 python snowball_wrapper.py jw01345001001_10201_00001_nrca3_uncal.fits
 ```
 
-*Customize Options:*
+**Customization Options:**
+
 At the top of `snowball_wrapper.py`: 
 * Input/output: provide the relative (or absolute) paths to the directory 
   containing the raw `uncal` files and the directory for the Detector1 outputs.
@@ -110,7 +111,8 @@ image in the `batch_scripts` directory for those who aim to reproduce our
 reduction.
 
 
-*Customize Options:*
+**Customization Options:** 
+
 At the top of `wispsub.py`:
 * Input/output: provide the relative (or absolute) paths to the directory
   containing the input `rate` files and the directory for the wisp-subtracted 
@@ -175,7 +177,8 @@ python remstriping.py jw01345001001_10201_00001_nrca3_rate.fits --thresh 0.15
 We provide the threshold used for each individual image in the `batch_scripts`
 directory for those who aim to reproduce our reduction.
 
-*Customize Options:*
+**Customization Options:**
+
 At the top of `remstriping.py`:
 * Input/output: provide the relative (or absolute) paths to the directory
   containing the input `rate` files and the directory for the 1/f-subtracted
