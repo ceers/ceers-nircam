@@ -1,0 +1,215 @@
+#ASDF 1.0.0
+#ASDF_STANDARD 1.5.0
+%YAML 1.1
+%TAG ! tag:stsci.edu:asdf/
+--- !core/asdf-1.1.0
+asdf_library: !core/software-1.0.0 {author: The ASDF Developers, homepage: 'http://github.com/asdf-format/asdf',
+  name: asdf, version: 2.13.0}
+history:
+  extensions:
+  - !core/extension_metadata-1.0.0
+    extension_class: asdf.extension.BuiltinExtension
+    software: !core/software-1.0.0 {name: asdf, version: 2.13.0}
+class: jwst.pipeline.calwebb_image3.Image3Pipeline
+meta:
+  author: <SPECIFY>
+  date: '2022-10-03T18:05:37'
+  description: Parameters for calibration step jwst.pipeline.calwebb_image3.Image3Pipeline
+  instrument: {name: <SPECIFY>}
+  origin: <SPECIFY>
+  pedigree: <SPECIFY>
+  reftype: <SPECIFY>
+  telescope: <SPECIFY>
+  useafter: <SPECIFY>
+name: Image3Pipeline
+parameters:
+  input_dir: ''
+  output_dir: calibrated
+  output_ext: .fits
+  output_file: null
+  output_use_index: true
+  output_use_model: false
+  post_hooks: []
+  pre_hooks: []
+  save_results: true
+  search_output_file: true
+  skip: false
+  suffix: null
+steps:
+- class: jwst.assign_mtwcs.assign_mtwcs_step.AssignMTWcsStep
+  name: assign_mtwcs
+  parameters:
+    input_dir: ''
+    output_dir: calibrated
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: true
+    post_hooks: []
+    pre_hooks: []
+    save_results: false
+    search_output_file: true
+    skip: false
+    suffix: assign_mtwcs
+- class: jwst.tweakreg.tweakreg_step.TweakRegStep
+  name: tweakreg
+  parameters:
+    abs_fitgeometry: rshift
+    abs_minobj: 15
+    abs_nclip: 3
+    abs_refcat: ''
+    abs_searchrad: 6.0
+    abs_separation: 0.1
+    abs_sigma: 3.0
+    abs_tolerance: 0.7
+    abs_use2dhist: true
+    bkg_boxsize: 400
+    brightest: 200
+    catalog_format: ecsv
+    enforce_user_order: false
+    expand_refcat: false
+    fitgeometry: shift
+    input_dir: ''
+    kernel_fwhm: 1.444
+    minobj: 15
+    nclip: 3
+    output_dir: calibrated
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: true
+    peakmax: null
+    post_hooks: []
+    pre_hooks: []
+    roundhi: 1.0
+    roundlo: -1.0
+    save_abs_catalog: false
+    save_catalogs: false
+    save_results: false
+    search_output_file: true
+    searchrad: 2.0
+    separation: 2.0
+    sharphi: 1.0
+    sharplo: 0.2
+    sigma: 3.0
+    skip: true
+    snr_threshold: 10.0
+    suffix: null
+    tolerance: 1.0
+    use2dhist: true
+    xoffset: 0.0
+    yoffset: 0.0
+- class: jwst.skymatch.skymatch_step.SkyMatchStep
+  name: skymatch
+  parameters:
+    binwidth: 0.1
+    dqbits: ~DO_NOT_USE+NON_SCIENCE
+    input_dir: ''
+    lower: null
+    lsigma: 4.0
+    match_down: true
+    nclip: 10
+    output_dir: calibrated
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    save_results: false
+    search_output_file: true
+    skip: false
+    skymethod: local
+    skystat: mode
+    stepsize: null
+    subtract: false
+    suffix: null
+    upper: 1.0
+    usigma: 2.0
+- class: jwst.outlier_detection.outlier_detection_step.OutlierDetectionStep
+  name: outlier_detection
+  parameters:
+    allowed_memory: null
+    backg: 0.0
+    fillval: INDEF
+    good_bits: ~DO_NOT_USE
+    grow: 1
+    in_memory: false
+    input_dir: ''
+    kernel: square
+    maskpt: 0.7
+    nhigh: 0
+    nlow: 0
+    output_dir: calibrated
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    pixfrac: 1.0
+    post_hooks: []
+    pre_hooks: []
+    resample_data: true
+    save_intermediate_results: false
+    save_results: false
+    scale: 1.2 0.7
+    scale_detection: false
+    search_output_file: false
+    skip: false
+    snr: 5.0 4.0
+    suffix: null
+    weight_type: ivm
+- class: jwst.resample.resample_step.ResampleStep
+  name: resample
+  parameters:
+    allowed_memory: null
+    blendheaders: true
+    crpix: null
+    crval: null
+    fillval: INDEF
+    in_memory: true
+    input_dir: ''
+    kernel: square
+    output_dir: calibrated
+    output_ext: .fits
+    output_file: null
+    output_shape: null
+    output_use_index: true
+    output_use_model: false
+    pixel_scale: null
+    pixel_scale_ratio: 1.0
+    pixfrac: 1.0
+    post_hooks: []
+    pre_hooks: []
+    rotation: null
+    save_results: false
+    search_output_file: true
+    single: false
+    skip: true
+    suffix: null
+    weight_type: ivm
+- class: jwst.source_catalog.source_catalog_step.SourceCatalogStep
+  name: source_catalog
+  parameters:
+    aperture_ee1: 30
+    aperture_ee2: 50
+    aperture_ee3: 70
+    bkg_boxsize: 1000
+    ci1_star_threshold: 2.0
+    ci2_star_threshold: 1.8
+    deblend: false
+    input_dir: ''
+    kernel_fwhm: 2.0
+    npixels: 25
+    output_dir: calibrated
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    save_results: false
+    search_output_file: true
+    skip: true
+    snr_threshold: 3.0
+    suffix: cat
+...
