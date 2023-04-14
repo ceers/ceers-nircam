@@ -141,19 +141,38 @@ You can download data from the MAST web portal or using Astropy astroquery.
 We provide a script to download all CEERS NIRCam imaging raw files, sorted
 by pointing ID. 
 
-Make a table of observation numbers and NIRCam pointings
-
-XXX In progress XXX
-
+To download all raw files from CEERS NIRCam pointing 1:
 ```
-python ceersdownload.py nircam1
+python ceersdownload.py 1
 ```
 
+To download all 1936 raw CEERS NIRCam files:
 ```
 python ceersdownload.py all
 ```
 
+All products are downloaded into individual subdirectories within a parent
+directory `DOWNLOAD_DIR/mastDownload/JWST`. To move all downloaded files from
+their subdirectories (and delete the subdirectories) to `DOWNLOAD_DIR`:
+```
+python ceersdownload.py 1 --cleanup
+```
 
+The download script can optionally also sort all raw files by CEERS NIRCam 
+pointing. To move all downloaded files into directories called `nircam1`, 
+`nircam2`, ...:
+```
+python ceersdownload.py ` --sort_files
+```
+If the `--sort_files` option is set, the subdirectory structure is cleaned
+up (`--cleanup`) by default.
+
+**Customization Options:**
+
+At the top of `ceersdownload.py`:
+* `DOWNLOAD_DIR`: provide the relative (or absolute) path to the directory
+  into which to download the MAST data products. 
+* `DATATYPE`: provide the type of data to download (`UNCAL`, `RATE`, `CAL`,etc.) 
 
 
 <a name='stage1'></a>
