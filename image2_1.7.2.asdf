@@ -42,7 +42,7 @@ steps:
   parameters:
     input_dir: calibrated
     maxiters: null
-    output_dir: null
+    output_dir: calibrated
     output_ext: .fits
     output_file: null
     output_use_index: true
@@ -60,7 +60,7 @@ steps:
   name: assign_wcs
   parameters:
     input_dir: calibrated
-    output_dir: null
+    output_dir: calibrated
     output_ext: .fits
     output_file: null
     output_use_index: true
@@ -84,7 +84,7 @@ steps:
   parameters:
     input_dir: calibrated
     inverse: false
-    output_dir: null
+    output_dir: calibrated
     output_ext: .fits
     output_file: null
     output_use_index: true
@@ -102,7 +102,7 @@ steps:
   parameters:
     input_dir: calibrated
     inverse: false
-    output_dir: null
+    output_dir: calibrated
     output_ext: .fits
     output_file: null
     output_use_index: true
@@ -125,7 +125,7 @@ steps:
     in_memory: true
     input_dir: calibrated
     kernel: square
-    output_dir: null
+    output_dir: calibrated
     output_ext: .fits
     output_file: null
     output_shape: null
