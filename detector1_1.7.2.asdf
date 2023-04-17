@@ -1,0 +1,308 @@
+#ASDF 1.0.0
+#ASDF_STANDARD 1.5.0
+%YAML 1.1
+%TAG ! tag:stsci.edu:asdf/
+--- !core/asdf-1.1.0
+asdf_library: !core/software-1.0.0 {author: The ASDF Developers, homepage: 'http://github.com/asdf-format/asdf',
+  name: asdf, version: 2.13.0}
+history:
+  extensions:
+  - !core/extension_metadata-1.0.0
+    extension_class: asdf.extension.BuiltinExtension
+    software: !core/software-1.0.0 {name: asdf, version: 2.13.0}
+class: jwst.pipeline.calwebb_detector1.Detector1Pipeline
+meta:
+  author: <SPECIFY>
+  date: '2022-09-29T18:12:08'
+  description: Parameters for calibration step jwst.pipeline.calwebb_detector1.Detector1Pipeline
+  instrument: {name: <SPECIFY>}
+  origin: <SPECIFY>
+  pedigree: <SPECIFY>
+  reftype: <SPECIFY>
+  telescope: <SPECIFY>
+  useafter: <SPECIFY>
+name: Detector1Pipeline
+parameters:
+  input_dir: calibrated
+  output_dir: calibrated
+  output_ext: .fits
+  output_file: null
+  output_use_index: true
+  output_use_model: false
+  post_hooks: []
+  pre_hooks: []
+  save_calibrated_ramp: false
+  save_results: true
+  search_output_file: true
+  skip: false
+  suffix: null
+steps:
+- class: jwst.group_scale.group_scale_step.GroupScaleStep
+  name: group_scale
+  parameters:
+    input_dir: calibrated
+    output_dir: null
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    save_results: false
+    search_output_file: true
+    skip: false
+    suffix: null
+- class: jwst.dq_init.dq_init_step.DQInitStep
+  name: dq_init
+  parameters:
+    input_dir: calibrated
+    output_dir: null
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    save_results: false
+    search_output_file: true
+    skip: false
+    suffix: null
+- class: jwst.saturation.saturation_step.SaturationStep
+  name: saturation
+  parameters:
+    input_dir: calibrated
+    n_pix_grow_sat: 1
+    output_dir: null
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    save_results: false
+    search_output_file: true
+    skip: false
+    suffix: null
+- class: jwst.ipc.ipc_step.IPCStep
+  name: ipc
+  parameters:
+    input_dir: calibrated
+    output_dir: null
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    save_results: false
+    search_output_file: true
+    skip: true
+    suffix: null
+- class: jwst.superbias.superbias_step.SuperBiasStep
+  name: superbias
+  parameters:
+    input_dir: calibrated
+    output_dir: null
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    save_results: false
+    search_output_file: true
+    skip: false
+    suffix: null
+- class: jwst.refpix.refpix_step.RefPixStep
+  name: refpix
+  parameters:
+    input_dir: calibrated
+    odd_even_columns: true
+    odd_even_rows: true
+    output_dir: null
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    save_results: false
+    search_output_file: true
+    side_gain: 1.0
+    side_smoothing_length: 11
+    skip: false
+    suffix: null
+    use_side_ref_pixels: true
+- class: jwst.rscd.rscd_step.RscdStep
+  name: rscd
+  parameters:
+    input_dir: calibrated
+    output_dir: null
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    save_results: false
+    search_output_file: true
+    skip: false
+    suffix: null
+    type: baseline
+- class: jwst.firstframe.firstframe_step.FirstFrameStep
+  name: firstframe
+  parameters:
+    input_dir: calibrated
+    output_dir: null
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    save_results: false
+    search_output_file: true
+    skip: false
+    suffix: null
+- class: jwst.lastframe.lastframe_step.LastFrameStep
+  name: lastframe
+  parameters:
+    input_dir: calibrated
+    output_dir: null
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    save_results: false
+    search_output_file: true
+    skip: false
+    suffix: null
+- class: jwst.linearity.linearity_step.LinearityStep
+  name: linearity
+  parameters:
+    input_dir: calibrated
+    output_dir: null
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    save_results: false
+    search_output_file: true
+    skip: false
+    suffix: null
+- class: jwst.dark_current.dark_current_step.DarkCurrentStep
+  name: dark_current
+  parameters:
+    dark_output: null
+    input_dir: calibrated
+    output_dir: null
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    save_results: false
+    search_output_file: true
+    skip: false
+    suffix: null
+- class: jwst.reset.reset_step.ResetStep
+  name: reset
+  parameters:
+    input_dir: calibrated
+    output_dir: null
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    save_results: false
+    search_output_file: true
+    skip: false
+    suffix: null
+- class: jwst.persistence.persistence_step.PersistenceStep
+  name: persistence
+  parameters:
+    flag_pers_cutoff: 40.0
+    input_dir: calibrated
+    input_trapsfilled: ''
+    output_dir: null
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    save_persistence: false
+    save_results: false
+    save_trapsfilled: true
+    search_output_file: true
+    skip: false
+    suffix: null
+- class: jwst.jump.jump_step.JumpStep
+  name: jump
+  parameters:
+    after_jump_flag_dn1: 0.0
+    after_jump_flag_dn2: 0.0
+    after_jump_flag_time1: 0.0
+    after_jump_flag_time2: 0.0
+    flag_4_neighbors: true
+    four_group_rejection_threshold: 5.0
+    input_dir: calibrated
+    max_jump_to_flag_neighbors: 1000.0
+    maximum_cores: none
+    min_jump_to_flag_neighbors: 10.0
+    output_dir: null
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    rejection_threshold: 4.0
+    save_results: false
+    search_output_file: true
+    skip: false
+    suffix: null
+    three_group_rejection_threshold: 6.0
+- class: jwst.ramp_fitting.ramp_fit_step.RampFitStep
+  name: ramp_fit
+  parameters:
+    input_dir: calibrated
+    int_name: ''
+    maximum_cores: none
+    opt_name: ''
+    output_dir: null
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    save_opt: false
+    save_results: false
+    search_output_file: true
+    skip: false
+    suffix: null
+    suppress_one_group: true
+- class: jwst.gain_scale.gain_scale_step.GainScaleStep
+  name: gain_scale
+  parameters:
+    input_dir: calibrated
+    output_dir: null
+    output_ext: .fits
+    output_file: null
+    output_use_index: true
+    output_use_model: false
+    post_hooks: []
+    pre_hooks: []
+    save_results: false
+    search_output_file: true
+    skip: false
+    suffix: null
+...
