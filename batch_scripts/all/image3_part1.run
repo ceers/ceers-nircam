@@ -1,0 +1,38 @@
+# nircam1
+strun image3_part1.asdf nircam1_f115w.json
+strun image3_part1.asdf nircam1_f150w.json
+strun image3_part1.asdf nircam1_f200w.json
+strun image3_part1.asdf nircam1_f277w.json
+strun image3_part1.asdf nircam1_f356w.json
+strun image3_part1.asdf nircam1_f410m.json
+strun image3_part1.asdf nircam1_f444w.json
+
+# nircam2
+strun image3_part1.asdf nircam2_f115w.json
+strun image3_part1.asdf nircam2_f150w.json
+strun image3_part1.asdf nircam2_f200w.json
+strun image3_part1.asdf nircam2_f277w.json
+strun image3_part1.asdf nircam2_f356w.json
+strun image3_part1.asdf nircam2_f410m.json
+strun image3_part1.asdf nircam2_f444w.json
+# additional imaging in nircam2
+strun image3_part1.asdf nircam2b_f200w.json
+strun image3_part1.asdf nircam2b_f444w.json
+
+# nircam3
+strun image3_part1.asdf nircam3_f115w.json
+strun image3_part1.asdf nircam3_f150w.json
+strun image3_part1.asdf nircam3_f200w.json
+strun image3_part1.asdf nircam3_f277w.json
+strun image3_part1.asdf nircam3_f356w.json
+strun image3_part1.asdf nircam3_f410m.json
+strun image3_part1.asdf nircam3_f444w.json
+
+# nircam6
+strun image3_part1.asdf nircam6_f115w.json
+strun image3_part1.asdf nircam6_f150w.json
+strun image3_part1.asdf nircam6_f200w.json
+strun image3_part1.asdf nircam6_f277w.json
+strun image3_part1.asdf nircam6_f356w.json
+strun image3_part1.asdf nircam6_f410m.json
+strun image3_part1.asdf nircam6_f444w.json

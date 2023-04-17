@@ -1,0 +1,7 @@
+strun image3_nircam1.asdf nircam1_f115w_final.json
+strun image3_nircam1.asdf nircam1_f150w_final.json
+strun image3_nircam1.asdf nircam1_f200w_final.json
+strun image3_nircam1.asdf nircam1_f277w_final.json
+strun image3_nircam1.asdf nircam1_f356w_final.json
+strun image3_nircam1.asdf nircam1_f410m_final.json
+strun image3_nircam1.asdf nircam1_f444w_final.json

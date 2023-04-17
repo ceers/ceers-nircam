@@ -1,0 +1,614 @@
+#ASDF 1.0.0
+#ASDF_STANDARD 1.5.0
+%YAML 1.1
+%TAG ! tag:stsci.edu:asdf/
+--- !core/asdf-1.1.0
+asdf_library: !core/software-1.0.0 {author: The ASDF Developers, homepage: 'http://github.com/asdf-format/asdf',
+  name: asdf, version: 2.12.0}
+history:
+  extensions:
+  - !core/extension_metadata-1.0.0
+    extension_class: asdf.extension.BuiltinExtension
+    software: !core/software-1.0.0 {name: asdf, version: 2.12.0}
+  - !core/extension_metadata-1.0.0
+    extension_class: asdf.extension._manifest.ManifestExtension
+    extension_uri: asdf://asdf-format.org/transform/extensions/transform-1.5.0
+    software: !core/software-1.0.0 {name: asdf-astropy, version: 0.2.1}
+  - !core/extension_metadata-1.0.0
+    extension_class: asdf.extension._manifest.ManifestExtension
+    extension_uri: asdf://asdf-format.org/core/extensions/core-1.5.0
+    software: !core/software-1.0.0 {name: asdf-astropy, version: 0.2.1}
+  - !core/extension_metadata-1.0.0
+    extension_class: asdf.extension._manifest.ManifestExtension
+    extension_uri: asdf://asdf-format.org/astronomy/gwcs/extensions/gwcs-1.0.0
+    software: !core/software-1.0.0 {name: gwcs, version: 0.18.0}
+  - !core/extension_metadata-1.0.0
+    extension_class: asdf.extension._manifest.ManifestExtension
+    extension_uri: asdf://asdf-format.org/astronomy/coordinates/extensions/coordinates-1.0.0
+    software: !core/software-1.0.0 {name: asdf-astropy, version: 0.2.1}
+filename: jw01345004001_02201_00003_nrca1_a3001_tweakreg.fits
+wcs: !<tag:stsci.edu:gwcs/wcs-1.0.0>
+  name: FIT-LVL3-USERCAT
+  steps:
+  - !<tag:stsci.edu:gwcs/step-1.0.0>
+    frame: !<tag:stsci.edu:gwcs/frame2d-1.0.0>
+      axes_names: [x, y]
+      axes_order: [0, 1]
+      axis_physical_types: ['custom:x', 'custom:y']
+      name: detector
+      unit: [!unit/unit-1.0.0 pixel, !unit/unit-1.0.0 pixel]
+    transform: !transform/compose-1.2.0
+      bounding_box:
+      - [-0.5, 2047.5]
+      - [-0.5, 2047.5]
+      forward:
+      - !transform/concatenate-1.2.0
+        forward:
+        - !transform/shift-1.2.0
+          inputs: [x]
+          offset: 0.042
+          outputs: [y]
+        - !transform/shift-1.2.0
+          inputs: [x]
+          offset: -0.151
+          outputs: [y]
+        inputs: [x0, x1]
+        outputs: [y0, y1]
+      - !transform/compose-1.2.0
+        forward:
+        - !transform/compose-1.2.0
+          forward:
+          - !transform/compose-1.2.0
+            forward:
+            - !transform/concatenate-1.2.0
+              forward:
+              - &id001 !transform/shift-1.2.0
+                inputs: [x]
+                offset: 1.0
+                outputs: [y]
+              - *id001
+              inputs: [x0, x1]
+              outputs: [y0, y1]
+            - !transform/concatenate-1.2.0
+              forward:
+              - !transform/shift-1.2.0
+                inputs: [x]
+                offset: -1024.5
+                outputs: [y]
+              - !transform/shift-1.2.0
+                inputs: [x]
+                offset: -1024.5
+                outputs: [y]
+              inputs: [x0, x1]
+              outputs: [y0, y1]
+            inputs: [x0, x1]
+            outputs: [y0, y1]
+          - !transform/compose-1.2.0
+            forward:
+            - !transform/compose-1.2.0
+              forward:
+              - !transform/remap_axes-1.3.0
+                inputs: [x0, x1]
+                mapping: [0, 1, 0, 1]
+                outputs: [x0, x1, x2, x3]
+              - !transform/concatenate-1.2.0
+                forward:
+                - !transform/polynomial-1.2.0
+                  coefficients: !core/ndarray-1.0.0
+                    source: 0
+                    datatype: float64
+                    byteorder: little
+                    shape: [6, 6]
+                  domain:
+                  - [-1, 1]
+                  - [-1, 1]
+                  inputs: [x, y]
+                  outputs: [z]
+                  window:
+                  - [-1, 1]
+                  - [-1, 1]
+                - !transform/polynomial-1.2.0
+                  coefficients: !core/ndarray-1.0.0
+                    source: 1
+                    datatype: float64
+                    byteorder: little
+                    shape: [6, 6]
+                  domain:
+                  - [-1, 1]
+                  - [-1, 1]
+                  inputs: [x, y]
+                  outputs: [z]
+                  window:
+                  - [-1, 1]
+                  - [-1, 1]
+                inputs: [x0, y0, x1, y1]
+                outputs: [z0, z1]
+              inputs: [x0, x1]
+              inverse: !transform/compose-1.2.0
+                forward:
+                - !transform/remap_axes-1.3.0
+                  inputs: [x0, x1]
+                  mapping: [0, 1, 0, 1]
+                  outputs: [x0, x1, x2, x3]
+                - !transform/concatenate-1.2.0
+                  forward:
+                  - !transform/polynomial-1.2.0
+                    coefficients: !core/ndarray-1.0.0
+                      source: 2
+                      datatype: float64
+                      byteorder: little
+                      shape: [6, 6]
+                    domain:
+                    - [-1, 1]
+                    - [-1, 1]
+                    inputs: [x, y]
+                    outputs: [z]
+                    window:
+                    - [-1, 1]
+                    - [-1, 1]
+                  - !transform/polynomial-1.2.0
+                    coefficients: !core/ndarray-1.0.0
+                      source: 3
+                      datatype: float64
+                      byteorder: little
+                      shape: [6, 6]
+                    domain:
+                    - [-1, 1]
+                    - [-1, 1]
+                    inputs: [x, y]
+                    outputs: [z]
+                    window:
+                    - [-1, 1]
+                    - [-1, 1]
+                  inputs: [x0, y0, x1, y1]
+                  outputs: [z0, z1]
+                inputs: [x0, x1]
+                outputs: [z0, z1]
+              outputs: [z0, z1]
+            - !transform/compose-1.2.0
+              forward:
+              - !transform/remap_axes-1.3.0
+                inputs: [x0, x1]
+                mapping: [0, 1, 0, 1]
+                outputs: [x0, x1, x2, x3]
+              - !transform/concatenate-1.2.0
+                forward:
+                - !transform/polynomial-1.2.0
+                  coefficients: !core/ndarray-1.0.0
+                    source: 4
+                    datatype: float64
+                    byteorder: little
+                    shape: [2, 2]
+                  domain:
+                  - [-1, 1]
+                  - [-1, 1]
+                  inputs: [x, y]
+                  outputs: [z]
+                  window:
+                  - [-1, 1]
+                  - [-1, 1]
+                - !transform/polynomial-1.2.0
+                  coefficients: !core/ndarray-1.0.0
+                    source: 5
+                    datatype: float64
+                    byteorder: little
+                    shape: [2, 2]
+                  domain:
+                  - [-1, 1]
+                  - [-1, 1]
+                  inputs: [x, y]
+                  outputs: [z]
+                  window:
+                  - [-1, 1]
+                  - [-1, 1]
+                inputs: [x0, y0, x1, y1]
+                outputs: [z0, z1]
+              inputs: [x0, x1]
+              inverse: !transform/compose-1.2.0
+                forward:
+                - !transform/remap_axes-1.3.0
+                  inputs: [x0, x1]
+                  mapping: [0, 1, 0, 1]
+                  outputs: [x0, x1, x2, x3]
+                - !transform/concatenate-1.2.0
+                  forward:
+                  - !transform/polynomial-1.2.0
+                    coefficients: !core/ndarray-1.0.0
+                      source: 6
+                      datatype: float64
+                      byteorder: little
+                      shape: [2, 2]
+                    domain:
+                    - [-1, 1]
+                    - [-1, 1]
+                    inputs: [x, y]
+                    outputs: [z]
+                    window:
+                    - [-1, 1]
+                    - [-1, 1]
+                  - !transform/polynomial-1.2.0
+                    coefficients: !core/ndarray-1.0.0
+                      source: 7
+                      datatype: float64
+                      byteorder: little
+                      shape: [2, 2]
+                    domain:
+                    - [-1, 1]
+                    - [-1, 1]
+                    inputs: [x, y]
+                    outputs: [z]
+                    window:
+                    - [-1, 1]
+                    - [-1, 1]
+                  inputs: [x0, y0, x1, y1]
+                  outputs: [z0, z1]
+                inputs: [x0, x1]
+                outputs: [z0, z1]
+              outputs: [z0, z1]
+            inputs: [x0, x1]
+            outputs: [z0, z1]
+          inputs: [x0, x1]
+          outputs: [z0, z1]
+        - !transform/concatenate-1.2.0
+          forward:
+          - !transform/shift-1.2.0
+            inputs: [x]
+            offset: 120.620865
+            outputs: [y]
+          - !transform/shift-1.2.0
+            inputs: [x]
+            offset: -527.54113667
+            outputs: [y]
+          inputs: [x0, x1]
+          outputs: [y0, y1]
+        inputs: [x0, x1]
+        outputs: [y0, y1]
+      inputs: [x0, x1]
+      outputs: [y0, y1]
+  - !<tag:stsci.edu:gwcs/step-1.0.0>
+    frame: !<tag:stsci.edu:gwcs/frame2d-1.0.0>
+      axes_names: [v2, v3]
+      axes_order: [0, 1]
+      axis_physical_types: ['custom:v2', 'custom:v3']
+      name: v2v3
+      unit: [!unit/unit-1.0.0 arcsec, !unit/unit-1.0.0 arcsec]
+    transform: !transform/compose-1.2.0
+      forward:
+      - !transform/concatenate-1.2.0
+        forward:
+        - !transform/scale-1.2.0
+          factor: 0.9999511723598041
+          inputs: [x]
+          name: dva_scale_v2
+          outputs: [y]
+        - !transform/scale-1.2.0
+          factor: 0.9999511723598041
+          inputs: [x]
+          name: dva_scale_v3
+          outputs: [y]
+        inputs: [x0, x1]
+        outputs: [y0, y1]
+      - !transform/concatenate-1.2.0
+        forward:
+        - !transform/shift-1.2.0
+          inputs: [x]
+          name: dva_v2_shift
+          offset: 0.00588480148257945
+          outputs: [y]
+        - !transform/shift-1.2.0
+          inputs: [x]
+          name: dva_v3_shift
+          offset: -0.02576543123848728
+          outputs: [y]
+        inputs: [x0, x1]
+        outputs: [y0, y1]
+      inputs: [x0, x1]
+      name: DVA_Correction
+      outputs: [y0, y1]
+  - !<tag:stsci.edu:gwcs/step-1.0.0>
+    frame: !<tag:stsci.edu:gwcs/frame2d-1.0.0>
+      axes_names: [v2, v3]
+      axes_order: [0, 1]
+      axis_physical_types: ['custom:v2', 'custom:v3']
+      name: v2v3vacorr
+      unit: [!unit/unit-1.0.0 arcsec, !unit/unit-1.0.0 arcsec]
+    transform: !transform/compose-1.2.0
+      forward:
+      - !transform/compose-1.2.0
+        forward:
+        - !transform/compose-1.2.0
+          forward:
+          - !transform/compose-1.2.0
+            forward:
+            - !transform/compose-1.2.0
+              forward:
+              - !transform/compose-1.2.0
+                forward:
+                - !transform/compose-1.2.0
+                  forward:
+                  - !transform/compose-1.2.0
+                    forward:
+                    - &id004 !transform/concatenate-1.2.0
+                      forward:
+                      - &id002 !transform/scale-1.2.0
+                        factor: 0.0002777777777777778
+                        inputs: [x]
+                        name: arcsec_to_deg_1D
+                        outputs: [y]
+                      - *id002
+                      inputs: [x0, x1]
+                      name: arcsec_to_deg_2D
+                      outputs: [y0, y1]
+                    - &id005 !<tag:stsci.edu:gwcs/spherical_cartesian-1.0.0>
+                      inputs: [lon, lat]
+                      name: s2c
+                      outputs: [x, y, z]
+                      transform_type: spherical_to_cartesian
+                      wrap_lon_at: 180
+                    inputs: [x0, x1]
+                    outputs: [x, y, z]
+                  - &id006 !transform/rotate_sequence_3d-1.0.0
+                    angles: [0.03347831416666667, 0.14657813083333335, 130.569588013652]
+                    axes_order: zyx
+                    inputs: [x, y, z]
+                    name: det_to_optic_axis
+                    outputs: [x, y, z]
+                    rotation_type: cartesian
+                  inputs: [x0, x1]
+                  outputs: [x, y, z]
+                - &id007 !transform/compose-1.2.0
+                  forward:
+                  - !transform/divide-1.2.0
+                    forward:
+                    - !transform/remap_axes-1.3.0
+                      inputs: [x0, x1, x2]
+                      mapping: [0, 1, 2]
+                      name: xyz
+                      outputs: [x0, x1, x2]
+                    - !transform/remap_axes-1.3.0
+                      inputs: [x0, x1, x2]
+                      mapping: [0, 0, 0]
+                      n_inputs: 3
+                      name: xxx
+                      outputs: [x0, x1, x2]
+                    inputs: [x0, x1, x2]
+                    outputs: [x0, x1, x2]
+                  - !transform/remap_axes-1.3.0
+                    inputs: [x0, x1, x2]
+                    mapping: [1, 2]
+                    name: xtyt
+                    outputs: [x0, x1]
+                  inputs: [x0, x1, x2]
+                  name: Cartesian 3D to TAN
+                  outputs: [x0, x1]
+                inputs: [x0, x1]
+                outputs: [x0, x1]
+              - !transform/affine-1.3.0
+                inputs: [x, y]
+                matrix: !core/ndarray-1.0.0
+                  source: 8
+                  datatype: float64
+                  byteorder: little
+                  shape: [2, 2]
+                name: tp_affine
+                outputs: [x, y]
+                translation: !core/ndarray-1.0.0
+                  source: 9
+                  datatype: float64
+                  byteorder: little
+                  shape: [2]
+              inputs: [x0, x1]
+              outputs: [x, y]
+            - &id008 !transform/compose-1.2.0
+              forward:
+              - !transform/remap_axes-1.3.0
+                inputs: [x0, x1]
+                mapping: [0, 0, 1]
+                name: xtyt2xyz
+                outputs: [x0, x1, x2]
+              - !transform/concatenate-1.2.0
+                forward:
+                - !transform/constant-1.4.0
+                  dimensions: 1
+                  inputs: [x]
+                  name: one
+                  outputs: [y]
+                  value: 1.0
+                - !transform/identity-1.2.0
+                  inputs: [x0, x1]
+                  n_dims: 2
+                  name: I(2D)
+                  outputs: [x0, x1]
+                inputs: [x, x0, x1]
+                outputs: [y, x0, x1]
+              inputs: [x0, x1]
+              name: TAN to cartesian 3D
+              outputs: [y, x0, x1]
+            inputs: [x0, x1]
+            outputs: [y, x0, x1]
+          - &id009 !transform/rotate_sequence_3d-1.0.0
+            angles: [-130.569588013652, -0.14657813083333335, -0.03347831416666667]
+            axes_order: xyz
+            inputs: [x, y, z]
+            name: optic_axis_to_det
+            outputs: [x, y, z]
+            rotation_type: cartesian
+          inputs: [x0, x1]
+          outputs: [x, y, z]
+        - &id010 !<tag:stsci.edu:gwcs/spherical_cartesian-1.0.0>
+          inputs: [x, y, z]
+          name: c2s
+          outputs: [lon, lat]
+          transform_type: cartesian_to_spherical
+          wrap_lon_at: 180
+        inputs: [x0, x1]
+        outputs: [lon, lat]
+      - &id011 !transform/concatenate-1.2.0
+        forward:
+        - &id003 !transform/scale-1.2.0
+          factor: 3600.0
+          inputs: [x]
+          name: deg_to_arcsec_1D
+          outputs: [y]
+        - *id003
+        inputs: [x0, x1]
+        name: deg_to_arcsec_2D
+        outputs: [y0, y1]
+      inputs: [x0, x1]
+      inverse: !transform/compose-1.2.0
+        forward:
+        - !transform/compose-1.2.0
+          forward:
+          - !transform/compose-1.2.0
+            forward:
+            - !transform/compose-1.2.0
+              forward:
+              - !transform/compose-1.2.0
+                forward:
+                - !transform/compose-1.2.0
+                  forward:
+                  - !transform/compose-1.2.0
+                    forward:
+                    - !transform/compose-1.2.0
+                      forward:
+                      - *id004
+                      - *id005
+                      inputs: [x0, x1]
+                      outputs: [x, y, z]
+                    - *id006
+                    inputs: [x0, x1]
+                    outputs: [x, y, z]
+                  - *id007
+                  inputs: [x0, x1]
+                  outputs: [x0, x1]
+                - !transform/affine-1.3.0
+                  inputs: [x, y]
+                  matrix: !core/ndarray-1.0.0
+                    source: 10
+                    datatype: float64
+                    byteorder: little
+                    shape: [2, 2]
+                  name: tp_affine_inv
+                  outputs: [x, y]
+                  translation: !core/ndarray-1.0.0
+                    source: 11
+                    datatype: float64
+                    byteorder: little
+                    shape: [2]
+                inputs: [x0, x1]
+                outputs: [x, y]
+              - *id008
+              inputs: [x0, x1]
+              outputs: [y, x0, x1]
+            - *id009
+            inputs: [x0, x1]
+            outputs: [x, y, z]
+          - *id010
+          inputs: [x0, x1]
+          outputs: [lon, lat]
+        - *id011
+        inputs: [x0, x1]
+        name: Inverse JWST tangent-plane linear correction. v1
+        outputs: [y0, y1]
+      name: JWST tangent-plane linear correction. v1
+      outputs: [y0, y1]
+  - !<tag:stsci.edu:gwcs/step-1.0.0>
+    frame: !<tag:stsci.edu:gwcs/frame2d-1.0.0>
+      axes_names: [v2, v3]
+      axes_order: [0, 1]
+      axis_physical_types: ['custom:v2', 'custom:v3']
+      name: v2v3corr
+      unit: [!unit/unit-1.0.0 arcsec, !unit/unit-1.0.0 arcsec]
+    transform: !transform/compose-1.2.0
+      forward:
+      - !transform/compose-1.2.0
+        forward:
+        - !transform/compose-1.2.0
+          forward:
+          - !transform/concatenate-1.2.0
+            forward:
+            - !transform/scale-1.2.0
+              factor: 0.0002777777777777778
+              inputs: [x]
+              outputs: [y]
+            - !transform/scale-1.2.0
+              factor: 0.0002777777777777778
+              inputs: [x]
+              outputs: [y]
+            inputs: [x0, x1]
+            outputs: [y0, y1]
+          - !<tag:stsci.edu:gwcs/spherical_cartesian-1.0.0>
+            inputs: [lon, lat]
+            outputs: [x, y, z]
+            transform_type: spherical_to_cartesian
+            wrap_lon_at: 180
+          inputs: [x0, x1]
+          outputs: [x, y, z]
+        - !transform/rotate_sequence_3d-1.0.0
+          angles: [0.03347831416666667, 0.14657813083333335, 130.569588013652, 52.81306784249794,
+            -214.8062706744903]
+          axes_order: zyxyz
+          inputs: [x, y, z]
+          outputs: [x, y, z]
+          rotation_type: cartesian
+        inputs: [x0, x1]
+        outputs: [x, y, z]
+      - !<tag:stsci.edu:gwcs/spherical_cartesian-1.0.0>
+        inputs: [x, y, z]
+        outputs: [lon, lat]
+        transform_type: cartesian_to_spherical
+        wrap_lon_at: 360
+      inputs: [x0, x1]
+      name: v23tosky
+      outputs: [lon, lat]
+  - !<tag:stsci.edu:gwcs/step-1.0.0>
+    frame: !<tag:stsci.edu:gwcs/celestial_frame-1.0.0>
+      axes_names: [lon, lat]
+      axes_order: [0, 1]
+      axis_physical_types: [pos.eq.ra, pos.eq.dec]
+      name: world
+      reference_frame: !<tag:astropy.org:astropy/coordinates/frames/icrs-1.1.0>
+        frame_attributes: {}
+      unit: [!unit/unit-1.0.0 deg, !unit/unit-1.0.0 deg]
+    transform: null
+wcsinfo: {a_0_2: -1.1204283774446593e-06, a_0_3: 2.3891264630410824e-11, a_1_1: -6.785211483565837e-06,
+  a_1_2: 4.1293757346334014e-10, a_2_0: -3.424599599606343e-08, a_2_1: 5.907171152278124e-11,
+  a_3_0: 3.364416912550213e-10, a_order: 3, ap_0_1: -1.9610590619499027e-07, ap_0_2: 1.1179094035402737e-06,
+  ap_0_3: -5.588164535506611e-12, ap_1_0: -5.533961623231153e-07, ap_1_1: 6.770913586890056e-06,
+  ap_1_2: -3.3671557164517855e-10, ap_2_0: 3.332293219834773e-08, ap_2_1: -7.075378938393518e-11,
+  ap_3_0: -3.49582751439368e-10, ap_order: 3, b_0_2: -4.695295903319024e-06, b_0_3: 3.8255161379347187e-10,
+  b_1_1: 1.1601570770547094e-06, b_1_2: 7.416786779947958e-12, b_2_0: 2.08267575688871e-06,
+  b_2_1: 3.4963123638899303e-10, b_3_0: -6.764010766478234e-12, b_order: 3, bp_0_1: -4.086260901556695e-07,
+  bp_0_2: 4.684872782079267e-06, bp_0_3: -3.390913288724077e-10, bp_1_0: 1.2082116216761805e-07,
+  bp_1_1: -1.1584050468873806e-06, bp_1_2: -3.6219541799765145e-11, bp_2_0: -2.0829184927487925e-06,
+  bp_2_1: -3.9508909713314756e-10, bp_3_0: 8.938444970716507e-12, bp_order: 3, cd1_1: 5.5674807539784e-06,
+  cd1_2: 6.6618963465977e-06, cd2_1: 6.6171798157422e-06, cd2_2: -5.5944479969595e-06,
+  crpix1: 1024.5, crpix2: 1024.5, crval1: 214.80628874654, crval2: 52.813022775517,
+  ctype1: RA---TAN-SIP, ctype2: DEC--TAN-SIP, cunit1: deg, cunit2: deg, dec_ref: 52.81306784249794,
+  latpole: 52.813022775517, lonpole: 180.0, mjdref: 0.0, ra_ref: 214.8062706744903,
+  radesys: ICRS, roll_ref: 130.569588013652, s_region: POLYGON ICRS  214.785470149
+    52.811926181 214.808165319 52.800570407 214.826941217 52.814023677 214.804452576
+    52.825598178, sipiverr: 0.04651191379998712, sipmxerr: 3.20904025015072e-12, v2_ref: 120.521931,
+  v3_ref: -527.681271, v3yangle: -0.57873665, velosys: 14568.71, vparity: -1, wcsaxes: 2,
+  wcsname: world}
+...
+”BLK 0                             µ =MY∫6›÷$Õ9;Du        Qg    ¨ªòÈ·eŒvbæ&92HıuÜ=\|Ú∫üÁêº®!D"Ïl<º+‡e·ü?&âÏe¯gåæØãsº¨=Gƒ·ˆ €©ºY^ÑÍ<        éôﬂ:|>ê
+–oñr{=ˆü≤(,’ºΩ≈5Æ%Ó<                ˇ˜4ÿ·®=ŒƒˆFÀ<d?e√3Œ.º                        Ù‰∑ì˜~’ºÌªC@zÙ<                                a* áüº                                        ”BLK 0                             ≥¡ÅÅXÂÏﬂiZ˘˙Lè∑        4 Ï	†?ÕzÜ„;ãÉæaÅi˙˝®ß=‚ß”¢AË›ºTÎÌﬂπ&<©Çs&C√˝>GGôÏ¡¶c>QÑK⁄{=]T5w’Ô®ºçO]›l≥2º        ì@¬>Øq>± Ç=Zc®=ßu≠Õ¢∂<5í$ü€‰6<                ˚îƒÃ3j=¶Í¸§$Õ¬ºdmï∫Æâ$º                        n\…(ÓÕÃºÄ[7æ2º                                â
+ÄÀ"&º                                        ”BLK 0                             Å›ò≠±k”øôœ%›K[ô        æHí$I‚ª¢ùTÿtR?ni¶dµ¶¡æ:ez±äö>1
+∫Rr_>ºN W@@ÈDÈ5=ã|?W;À¢Áæ˜Ú.}a?8æk(«mH˘Ω        ";ÚrHV øø¸p@-¡æÓÆ8ä≈c>√‚pÃXÓΩ                Á›}“ô&Íæq È´écæ.{Ü¡S>                        liêÍe>be•ù(€Ω                                ŒNhó >                                        ”BLK 0                             òå!éŸC†…˘ÖÑ7å#        ÁN4∏Ì?@=˘àÔ$ks?Lº’ë•æ‰æ˛¿√√Óçg>Ï∞ÌMÔOær–o‚»:ùøó£	J∫TøÅ⁄UJX`≈æbTir#â:>vPØª>        k0PÅè≈aøroVpôÎæè?ë2cQæq~´ø¿æ                ﬁhõwÿÙ•æJ{ó◊-\V>)`¯Ú'>                        .%ﬁ≈`>”≤√ªùb>                                †ÔF|>                                        ”BLK 0                                +5Éøj\{h1—Z7√ZH        +©¶M,àÉøK5±ü†ˇÔø        ”BLK 0                                ß¸ÉeEπÉx]¢+«6æé        K5±ü†ˇÔ?+©¶M,àÉø        ”BLK 0                                +5Éøj\{h1—Z7√ZH        +©¶M,àÉøK5±ü†ˇÔø        ”BLK 0                                ß¸ÉeEπÉx]¢+«6æé        K5±ü†ˇÔ?+©¶M,àÉø        ”BLK 0                                €ô˘˚2Æ©‹„yÑπ73&J·˙ˇˇÔ?∫É/@"øli/@"?·˙ˇˇÔ?”BLK 0                             èÊªíçÇâeË[óiÿôJ)´ê>o•ØÈ‘â>”BLK 0                                €Ø´:ÍfûDçÃœ9í£·˙ˇˇÔ?πÉ/@"?ki/@"ø%J·˙ˇˇÔ?”BLK 0                             •g¢‹O…XÑ
+vËXÆ«8åΩh¿≈ö´êæ*5'ßâæ#ASDF BLOCK INDEX
+%YAML 1.1
+---
+- 21911
+- 22253
+- 22595
+- 22937
+- 23279
+- 23365
+- 23451
+- 23537
+- 23623
+- 23709
+- 23779
+- 23865
+...

@@ -1,0 +1,67 @@
+{
+    "asn_type": "None",
+    "asn_rule": "DMS_Level3_Base",
+    "version_id": null,
+    "code_version": "1.7.2",
+    "degraded_status": "No known degraded exposures in association.",
+    "program": "noprogram",
+    "constraints": "No constraints",
+    "asn_id": "a3001",
+    "target": "none",
+    "asn_pool": "none",
+    "products": [
+        {
+            "name": "ceers_nircam2all_f444w_dr05",
+            "members": [
+                {
+                    "expname": "calibrated/jw01345002001_14201_00001_nrcalong_a3001_match.fits",
+                    "exptype": "science"
+                },
+                {
+                    "expname": "calibrated/jw01345002001_14201_00001_nrcblong_a3001_match.fits",
+                    "exptype": "science"
+                },
+                {
+                    "expname": "calibrated/jw01345002001_14201_00002_nrcalong_a3001_match.fits",
+                    "exptype": "science"
+                },
+                {
+                    "expname": "calibrated/jw01345002001_14201_00002_nrcblong_a3001_match.fits",
+                    "exptype": "science"
+                },
+                {
+                    "expname": "calibrated/jw01345002001_14201_00003_nrcalong_a3001_match.fits",
+                    "exptype": "science"
+                },
+                {
+                    "expname": "calibrated/jw01345002001_14201_00003_nrcblong_a3001_match.fits",
+                    "exptype": "science"
+                },
+                {
+                    "expname": "calibrated/jw01345052001_02201_00001_nrcalong_a3001_match.fits",
+                    "exptype": "science"
+                },
+                {
+                    "expname": "calibrated/jw01345052001_02201_00001_nrcblong_a3001_match.fits",
+                    "exptype": "science"
+                },
+                {
+                    "expname": "calibrated/jw01345052001_02201_00002_nrcalong_a3001_match.fits",
+                    "exptype": "science"
+                },
+                {
+                    "expname": "calibrated/jw01345052001_02201_00002_nrcblong_a3001_match.fits",
+                    "exptype": "science"
+                },
+                {
+                    "expname": "calibrated/jw01345052001_02201_00003_nrcalong_a3001_match.fits",
+                    "exptype": "science"
+                },
+                {
+                    "expname": "calibrated/jw01345052001_02201_00003_nrcblong_a3001_match.fits",
+                    "exptype": "science"
+                }
+            ]
+        }
+    ]
+}

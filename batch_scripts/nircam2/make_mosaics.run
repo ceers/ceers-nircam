@@ -1,0 +1,13 @@
+strun image3_nircam2.asdf nircam2_f115w_final.json
+strun image3_nircam2.asdf nircam2_f150w_final.json
+strun image3_nircam2.asdf nircam2_f200w_final.json
+strun image3_nircam2.asdf nircam2_f277w_final.json
+strun image3_nircam2.asdf nircam2_f356w_final.json
+strun image3_nircam2.asdf nircam2_f410m_final.json
+strun image3_nircam2.asdf nircam2_f444w_final.json
+# make separate mosiacs with additional imaging
+strun image3_nircam2.asdf nircam2b_f200w_final.json
+strun image3_nircam2.asdf nircam2b_f444w_final.json
+# make combined mosiacs with additional imaging
+strun image3_nircam2.asdf nircam2all_f200w_final.json
+strun image3_nircam2.asdf nircam2all_f444w_final.json

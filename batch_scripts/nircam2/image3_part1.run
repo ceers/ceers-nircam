@@ -1,0 +1,10 @@
+strun image3_part1.asdf nircam2_f115w.json
+strun image3_part1.asdf nircam2_f150w.json
+strun image3_part1.asdf nircam2_f200w.json
+strun image3_part1.asdf nircam2_f277w.json
+strun image3_part1.asdf nircam2_f356w.json
+strun image3_part1.asdf nircam2_f410m.json
+strun image3_part1.asdf nircam2_f444w.json
+# additional imaging in nircam2
+strun image3_part1.asdf nircam2b_f200w.json
+strun image3_part1.asdf nircam2b_f444w.json
