@@ -33,7 +33,7 @@ import compute_cal_sky_variance
 INPUTDIR = 'calibrated'
 OUTPUTDIR = 'calibrated'
 # Directory containing Tweakreg WCS solutions
-TWEAKDIR = 'tweakreg/tweakreg_wcs'
+TWEAKDIR = 'tweakreg_wcs'
 # Suffix of input files to be processed
 FILE_SUFFIX = 'crf'
 # Suffix of 2D background subtracted image
@@ -210,7 +210,9 @@ def process(cal, plot_sky=False):
     model.meta.background.method = 'local'
 
 
-    ### update WCS if necessary
+    ### update WCS if necessary 
+    # this should already have been done before outlier detection, but
+    # do it here just in case 
     # find tweakregged asdf file for this image
     if model.meta.cal_step.tweakreg != 'COMPLETE':  
         # image3_part1.asdf adds the association id a3001 to the filename

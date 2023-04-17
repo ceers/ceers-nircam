@@ -25,9 +25,8 @@ CEERS NIRCam pointing 1 would look like:
 ```
 python run_tweakreg.py jw01345001001 f150w 0
 strun image3_part1.asdf nircam1_f150w.json
-python background_wrapper.py 
-python skysub_wcs_varscale.py
-strun image3_nircam1.asdf nircam1_f150w.json
+python skysub_wcs_varscale.py --all_images
+strun image3_nircam1.asdf nircam1_f150w_final.json
 ```
 
 Each of these scripts is described in detail below. 
