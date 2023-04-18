@@ -161,7 +161,7 @@ The download script can optionally also sort all raw files by CEERS NIRCam
 pointing. To move all downloaded files into directories called `nircam1`, 
 `nircam2`, etc.: 
 ```
-python ceersdownload.py --sort_files
+python ceersdownload.py 1 --sort_files
 ```
 If the `--sort_files` option is set, the subdirectory structure is cleaned
 up (`--cleanup`) by default.
