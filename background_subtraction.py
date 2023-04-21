@@ -2,7 +2,7 @@
 #
 
 __author__ = "Henry C. Ferguson, STScI"
-__version__ = "1.4.)"
+__version__ = "1.4.0"
 __license__ = "BSD3"
 
 # History

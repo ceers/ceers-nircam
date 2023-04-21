@@ -198,3 +198,66 @@ Within `image3_nircam[pointing].asdf`:
   called `calibrate`.
 
 
+<a name='bkgsub'></a>
+## Background Subtraction
+
+Mosaic creation is described in Section 3.3.3 of [Bagley et al. (2023)](https://ui.adsabs.harvard.edu/abs/2023ApJ...946L..12B/abstract).
+
+Finally, we estimate and subtract any remaining background in the mosaics 
+using a custom Python script that efficiently masks source flux before fitting 
+the unmasked pixels with a two-dimensional model. The source masking is 
+performed in several tiers to detect and mask progressively smaller sources.
+Once a source mask is created for each individual mosaic, the masks from all
+available filters in the pointing are combined to create one final, merged
+mask. The background in each filter is then estimated using the unmasked 
+pixels. The result of this step is a background-subtracted image, a 
+background map, and a "tiermask," where anything set to 0 is used for 
+estimating background and anything non-zero is not used.
+
+**Steps in the process:**
+
+ - Mask sources in each individual image using a tiered approach
+ - Merge the masks from each filter for the pointing
+ - In some cases "hand edit" the masks to remove spurious sources near the 
+   borders or patches of scattered light that were identified as astronomical 
+   sources to be masked.
+ - After this editing, merge all of the masks from HST and JWST (with the 
+   possible excception of bands where the mask was not very useful -- e.g. 
+   F105W for some fields where there is not much area overlap).
+ - Re-measure the background for each image using this merged mask
+
+We perform this background subtraction with `mosaic_background.py`, which 
+will do all of the above steps on all imaging for a single CEERS NIRCam
+pointing. To run `mosaic_background.py` on the mosaics from NIRCam pointing 1 
+(`nircam1`):
+```
+python mosaic_background.py nircam1
+```
+
+To include HST imaging:
+```
+python mosaic_background.py nircam1 --add_hst
+```
+This will include the source masks from the HST images in the merged mask. 
+The HST images will also be background subtracted, though those images already
+have backgrounds close to zero. The HST imaging is available for each CEERS 
+NIRCam pointing on the CEERS website: 
+[ceers.github.io/dr05.html](https://ceers.github.io/dr05.html). 
+These cutouts are taken from the full HST mosaics available at 
+[ceers.github.io/hdr1.html](https://ceers.github.io/hdr1.html).
+
+
+**Customization Options:**
+
+At the top of `mosaic_background.py`:
+* Input/output: provide the relative (or absolute) path to the directory
+  containing the mosaics. The defauls is `calibrated`, and the 
+  background-subtracted mosaics and merged mask will be saved to the same
+  directory.
+* Provide the directory containing the HST imaging. This is necessary if 
+  the HST imaging will be included in the merged mask.
+* Provide the filename for the merged source mask.
+* Provide the file suffixes for the output 2D background subtracted images
+  based on individual source masks (default = 'bkgsub1'), and the output 2D 
+  background subtracted images based on the merged mask ('mbkgsub1')
+
