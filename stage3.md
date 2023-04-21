@@ -234,6 +234,12 @@ pointing. To run `mosaic_background.py` on the mosaics from NIRCam pointing 1
 python mosaic_background.py nircam1
 ```
 
+The parameters we used to generate the tiermasks for each filter are 
+provided in `mosaic_background.cfg`. The `mosaic_background.py` routine 
+uses this config file when running the initial background subtraction and 
+source masking on each individual filter, and so updating these parameters
+in the config file will change them for `mosaic_background.py`.
+
 To include HST imaging:
 ```
 python mosaic_background.py nircam1 --add_hst
