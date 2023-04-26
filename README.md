@@ -88,7 +88,7 @@ contributed quickly to developing our procedures.
 ### Reduction Code Versions
 
 This represents v0.5. As time goes on, we may provide updates to our scripts 
-here. If you wish to download the version we used to produce DR05, use tag0.5: 
+here. If you wish to download the version we used to produce DR0.5, use tag0.5: 
 ```
 git clone 
 ```
@@ -127,7 +127,7 @@ This assumes you will store reference files in a directory `crds_cache` in
 your home directory.
 
 Finally, to reproduce our reduction, please specify the same CRDS pipeline
-mapping (pmap) that we used in creating the DR05 reduction:
+mapping (pmap) that we used in creating the DR0.5 reduction:
 ```
 export CRDS_CONTEXT=jwst_0989.pmap
 ```

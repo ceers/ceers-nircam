@@ -54,8 +54,53 @@ run this script if you use the already prepared files in `batch_scripts`.
 
 The Astrometric alignment is described in Section 3.3.1 of [Bagley et al. (2023)](https://ui.adsabs.harvard.edu/abs/2023ApJ...946L..12B/abstract).
 
+We perform an astrometric calibration using a modified version of the 
+Pipeline TweakReg routine, with the modifications primarily aimed at 
+exposing more fitting parameters and being able to input our own catalogs. 
+The main addition to the default TweakReg routine is the ability to 
+specify a user-provided catalog to use as the absolute astrometric reference
+as well as user-provided individual source catalogs for each image.
+These modifications are required for Pipeline versions <1.8, and so must 
+be used to fully recreate our DR0.5 reduction. These modifications were
+incorporated into the Pipeline starting with version 1.8.
 
-Coming Soon.
+To use our modified Tweakreg, you first replace the installed Pipeline
+routine with our version of `tweakreg_step.py`. First, identify where the 
+Pipeline is installed:
+```
+from jwst.tweakreg import tweakreg_step 
+print(tweakreg_step.__file__)
+```
+This will print the absolute path to the Pipeline version of 
+`tweakreg_step.py`. Replace the Pipeline script with the `tweakreg_step.py` 
+from this GitHub repo.
+
+Next, we provide a wrapper to call the TweakReg step, `run_tweakreg.py`. 
+The wrapper runs Source Extractor on each individual input image to 
+detect the source positions using the windowed centroid coordinates, and 
+our modified `tweakreg_step.py` matches these input positions with the 
+sources in the absolute reference catalog.
+
+TweakReg should be run on each filter and visit separately. To run it on 
+F115W images in the first visit of observation 1:
+```
+python run_tweakreg.py jw01345001001 f115w 
+```
+The wrapper will look for all F115W images with the prefix `jw01345001001` 
+that are in the current working directory. It will group them into an 
+association file, run Source Extractor, prepare the input catalogs, invoke
+TweakReg, and parse the TweakReg output into an output file called 
+`tweakreg_results_all.jw01345001001.txt`. This output file will summarize
+the X,Y shifts, rotations and scalings of the relative and absolute 
+astrometric fits as well as the RMS of the alignments. 
+
+The parameters for the fits are set using configuration files, for example
+`f115w.cfg`. 
+
+```
+python run_tweakreg.py jw01345001001 f115w --save_fit
+```
+
 
 
 <a name='outliers'></a>
@@ -73,7 +118,7 @@ file `image3_part1.asdf`. This parameter file runs the SkyMatch and
 OutlierDetection steps of Stage 3 with the v1.7.2 pipeline defaults. We 
 include the SkyMatch step so that the headers are appropriately updated with 
 all the necessary keywords, though the sky background is not subtracted at 
-this time (see XXX below).
+this time (see [Sky Subtraction](#skysubvar) below).
 
 All Stage 3 processing works on sets of images, using association files 
 that list all images for processing
