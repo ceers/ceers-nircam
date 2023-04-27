@@ -2,7 +2,7 @@
 
 Reduction scripts related to Stage 1 and our custom routines
 
-
+<a name='top'></a>
 ## Table of contents
 
 * [Reduction Steps](#summary)
@@ -10,7 +10,7 @@ Reduction scripts related to Stage 1 and our custom routines
 * [Astrometric Alignment](#tweakreg)
   * [Updating the WCS in Headers](#updatewcs)
   * [Running TweakReg in Pipeline v1.8+](#newtweakreg)
-  * [Running TweakReg in Pipeline v<1.7](#oldtweakreg)
+  * [Running TweakReg in Pipeline v<1.8](#oldtweakreg)
 * [Outlier Detection](#outliers)
 * [Sky Subtraction, Variance Map Updates](#skysubvar)
 * [Mosaic Creation](#mosaics)
@@ -51,6 +51,8 @@ are available in the `batch_scripts` directory. We also provide the script
 used to create these files (`prep_stage3.py`), though there is no need to 
 run this script if you use the already prepared files in `batch_scripts`.
 
+[Return to Top](#top)
+
 
 <a name='tweakreg'></a>
 ## Astrometric Alignment
@@ -64,7 +66,7 @@ Pipeline had a limited number of absolute reference catalogs available,
 none of which worked for CEERS as they had too few sources. Additionally, 
 we found that the internal source detection routine was detecting too many 
 spurious sources in the input images, and the source detection parameters 
-were not easily tunable. Our modified version therefore accepts user-provided
+were as tunable as needed. Our modified version therefore accepts user-provided
 source catalogs for each input image as well as an absolute reference catalog.
 
 Our modifications are required for Pipeline versions <1.8, and so must 
@@ -82,7 +84,7 @@ our run of TweakReg to update the WCS in the image headers. This will allow
 you to recreate our DR0.5 reduction without needing to alter your Pipeline
 installation. We provide the tweaked WCS models for all 690 images
 in the `batch_scripts/tweakreg_wcs` folder. 
-To use our saved WCS model to update the header of a single file cal 
+To use our saved WCS model to update the header of a single cal 
 file (`jw01345001001_02201_00001_nrca1_rate.fits`):
 ```
 python updatewcs.py --image jw01345001001_02201_00001_nrca1_rate.fits
@@ -98,7 +100,7 @@ At the top of `updatewcs.py`:
 * Input/output: provide the relative (or absolute) paths to the directory
   containing the input calibrated files and the directory for the output,
   corrected images. Default is `calibrated` for both.
-* Provide the directory containing the saved Tweakreg asdf files.
+* Provide the path to the directory containing the saved Tweakreg asdf files.
   Default is `tweakreg_wcs`, which is packaged in the `batch_scripts` directory 
   of this repo
 * Provide the file suffixes for the input images (default = 'cal') and the
@@ -108,14 +110,15 @@ At the top of `updatewcs.py`:
 <a name='newtweakreg'></a>
 ### Running TweakReg in Pipeline v1.8+
 
-We provide a wrapper for TweakReg that works with **Pipeline versions 1.8+**,
-`run_tweakreg.py`. TweakReg should be run on each filter and visit separately.
-To run the wrapper on F115W images in the first visit of observation 1:
+We provide a wrapper for TweakReg (`run_tweakreg.py`) that works with 
+**Pipeline versions 1.8+**. TweakReg should be run on each filter and visit 
+separately. To run the wrapper on F115W images in the first visit of 
+observation 1:
 ```
 python run_tweakreg.py jw01345001001 f115w
 ```
 The wrapper will look for all F115W images with the prefix `jw01345001001`
-that are in the specified INPUTDIR directory. It will group them into
+that are in the specified `INPUTDIR` directory. It will group them into
 associations for each detector, run Source Extractor to detect source 
 positions using the windowed centroid coordinates, prepare the input
 catalogs, invoke TweakReg, and parse the TweakReg output into an output file
@@ -149,7 +152,7 @@ The parameters for the fits are set using configuration files, for example
 `f115w.cfg`. The wrapper will look for files called `filt.cfg`, where 
 `filt` is specified in the call to `run_tweakreg.py`.
 These config files should have one section for each visit during which 
-the filter was observed. For example, F115W was observed in visit 1 for 
+the filter was observed. For example, F115W was observed in visit `01` for 
 CEERS NIRCam1, so `f115w.cfg` would have:
 ```
 [jw01345001001]
@@ -177,19 +180,27 @@ abs_nclip      = 1
 abs_sigma      = 0.6
 abs_fitgeom    = rshift
 ```
-If F115W had also been observed in visit 2, there would need to be a second 
+If F115W had also been observed in visit `02`, there would need to be a second 
 section with the ID `[jw01345001002]` so that the visits could be aligned
-separately. See the documentation for the [TweakReg routine](https://jwst-pipeline.readthedocs.io/en/latest/jwst/tweakreg/README.html) for more information 
-on each parameter.
+separately. We provide the config files for each filter and pointing used for
+DR0.5 in `batch_scripts/tweakreg_cfgs`.
+
+We recommend using a fit geometry for the absolute alignment that
+allows for only shifts and rotations (`rshift`) for short wavelength filters 
+and shifts, rotations and scalings (`rscale`) for the long wavelength filters. 
+Our wrapper is hard-coded to use only shifts for the relative alignment.
+See the documentation for the [TweakReg routine](https://jwst-pipeline.readthedocs.io/en/latest/jwst/tweakreg/README.html) for more information on each 
+parameter.
 
 You may find the need to run TweakReg several times for a set of images in 
 order to determine the optimal parameters. 
 When you are happy with the astrometric fit, rerun the wrapper with the
-`save_results` kwarg. 
+`save_results` kwarg:
 ```
 python run_tweakreg.py jw01345001001 f115w --save_results
 ```
-This will write the output files, each image saved with the updated WCS.
+This will write the output files, each image saved with the updated WCS and
+a file suffix `*tweakreg.fits`.
 Additionally, it will save the WCS models (`*asdf` files) for later use so 
 you can update the WCS of future versions of the images without rerunning
 TweakReg (see [Updating the WCS in Headers](updatewcs) above).
@@ -198,12 +209,10 @@ TweakReg (see [Updating the WCS in Headers](updatewcs) above).
 **Customization Options:**
 
 At the top of `run_tweakreg.py`:
-* Input/output: provide the relative (or absolute) paths to the directory
-  containing the input calibrated files and the directory for the output,
-  corrected images. Default is `calibrated` for both.
-* Provide the directory and filename of the absolute reference catalog.
-* Provide the file suffixes for the input images (default = 'cal') and the
-  the output images with updated WCS headers (default = 'tweakreg')
+* Input/output: provide the relative (or absolute) path to the directory
+  containing the input calibrated files. Default is `calibrated`.
+* Provide the path and filename of the absolute reference catalog.
+* Provide the file suffixes for the input images (default = 'cal') 
 * Provide the directory for saving the Tweakreg asdf files. Default 
   is `tweakreg_wcs`
 
@@ -217,7 +226,7 @@ want to run TweakReg from scratch using a Pipeline version <1.8, we provide a
 wrapper `run_tweakreg_1.7.py` and modified version of the TweakReg routine 
 `tweakreg_step.py` to work with it. 
 
-To use our modified Tweakreg, you must replace the installed Pipeline 
+To use our modified TweakReg, you must replace the installed Pipeline 
 routine with our version of `tweakreg_step.py`. First, identify where the 
 Pipeline is installed:
 ```
@@ -232,6 +241,8 @@ not allow for user-specified input and absolute reference catalogs.
 Next, you can run the wrapper `run_tweakreg_1.7.py` as described in the 
 above section ([Running TweakReg in Pipeline v1.8+](newtweakreg)), using
 the same method of config files for setting the parameters.
+
+[Return to Top](#top)
 
 
 <a name='outliers'></a>
@@ -271,6 +282,8 @@ Within `image3_part1.asdf`:
   the `input_dir` and `output_dir` parameters. The association files we
   provide in `batch_scripts` assume input images can be found in a directory
   called `calibrated`.
+
+[Return to Top](#top)
 
 
 <a name='skysubvar'></a>
@@ -330,6 +343,8 @@ At the top of `skywcsvar.py`:
   output 2D background subtracted images ('bkgsub1'), and the output 
   corrected images ('match')
 
+[Return to Top](#top)
+
 
 <a name='mosaics'></a>
 ## Mosaic Creation
@@ -372,6 +387,8 @@ Within `image3_nircam[pointing].asdf`:
   the `input_dir` and `output_dir` parameters. The association files we
   provide in `batch_scripts` assume input images can be found in a directory
   called `calibrate`.
+
+[Return to Top](#top)
 
 
 <a name='bkgsub'></a>
@@ -433,7 +450,7 @@ These cutouts are taken from the full HST mosaics available at
 
 At the top of `mosaic_background.py`:
 * Input/output: provide the relative (or absolute) path to the directory
-  containing the mosaics. The defauls is `calibrated`, and the 
+  containing the mosaics. The default is `calibrated`, and the 
   background-subtracted mosaics and merged mask will be saved to the same
   directory.
 * Provide the directory containing the HST imaging. This is necessary if 
@@ -442,4 +459,6 @@ At the top of `mosaic_background.py`:
 * Provide the file suffixes for the output 2D background subtracted images
   based on individual source masks (default = 'bkgsub1'), and the output 2D 
   background subtracted images based on the merged mask ('mbkgsub1')
+
+[Return to Top](#top)
 
