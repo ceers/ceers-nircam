@@ -17,7 +17,7 @@ change the input/output options in each reduction script.
 We provide the output WCS calculated by our runs of the tweakreg step for 
 each pointing, along with the Python code that will apply this tweaked WCS
 to each image header. Therefore, you do not need to run the TweakReg step 
-yourself, and can use the `update_wcs.py` script instead to use the CEERS
+yourself, and can use the `updatewcs.py` script instead to use the CEERS
 astrometry from DR0.5.
 
 We provide scripts to reduce the CEERS NIRCam pointings individually in the
