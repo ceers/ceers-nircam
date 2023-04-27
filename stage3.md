@@ -85,9 +85,9 @@ you to recreate our DR0.5 reduction without needing to alter your Pipeline
 installation. We provide the tweaked WCS models for all 690 images
 in the `batch_scripts/tweakreg_wcs` folder. 
 To use our saved WCS model to update the header of a single cal 
-file (`jw01345001001_02201_00001_nrca1_rate.fits`):
+file (`jw01345001001_02201_00001_nrca1_cal.fits`):
 ```
-python updatewcs.py --image jw01345001001_02201_00001_nrca1_rate.fits
+python updatewcs.py --image jw01345001001_02201_00001_nrca1_cal.fits
 ```
 To update the headers of all images in the specified `INPUTDIR`:
 ```
@@ -386,7 +386,7 @@ Within `image3_nircam[pointing].asdf`:
 * Input/output: The input and output directory locations can be changed via
   the `input_dir` and `output_dir` parameters. The association files we
   provide in `batch_scripts` assume input images can be found in a directory
-  called `calibrate`.
+  called `calibrated`.
 
 [Return to Top](#top)
 
