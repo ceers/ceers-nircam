@@ -136,8 +136,8 @@ grep Absolute tweakreg_results_all.jw01345001001.txt | sort
 
 The wrapper requires a few files:
 
-* Source Extractor files - `sextractor.config`, `sextractor.conv`,
-  `sextractor.nnw` and `sextractor.outputs`. These are required to run 
+* Source Extractor files - `se.config`, `se.conv`,
+  `se.nnw` and `se.outputs`. These are required to run 
   the source detection on each individual input catalog, and should be 
   in the working directory.
 * `tweakreg_log.cfg` - a Pipeline configuration file that sets the name of 
