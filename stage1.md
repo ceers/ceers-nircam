@@ -163,7 +163,7 @@ To save the striping patterns for later reference:
 python remstriping.py jw01345001001_10201_00001_nrca3_rate.fits --save_patterns
 ```
 
-For DR05, we visually inspected each 1/f noise-subtracted image and adjusted
+For DR0.5, we visually inspected each 1/f noise-subtracted image and adjusted
 the masking threshold for the images with over- or under-subtracted pattern 
 noise. For example, images with large, bright sources usually benefit from 
 a threshold closer to 0.1 than 0.8. The threshold can either be changed 
