@@ -8,6 +8,9 @@ Reduction scripts related to Stage 1 and our custom routines
 * [Reduction Steps](#summary)
 * [JWST Calibration Image3 Pipeline](#image3)
 * [Astrometric Alignment](#tweakreg)
+  * [Updating the WCS in Headers](#updatewcs)
+  * [Running TweakReg in Pipeline v1.8+](#newtweakreg)
+  * [Running TweakReg in Pipeline v<1.7](#oldtweakreg)
 * [Outlier Detection](#outliers)
 * [Sky Subtraction, Variance Map Updates](#skysubvar)
 * [Mosaic Creation](#mosaics)
@@ -55,16 +58,166 @@ run this script if you use the already prepared files in `batch_scripts`.
 The Astrometric alignment is described in Section 3.3.1 of [Bagley et al. (2023)](https://ui.adsabs.harvard.edu/abs/2023ApJ...946L..12B/abstract).
 
 We perform an astrometric calibration using a modified version of the 
-Pipeline TweakReg routine, with the modifications primarily aimed at 
-exposing more fitting parameters and being able to input our own catalogs. 
-The main addition to the default TweakReg routine is the ability to 
-specify a user-provided catalog to use as the absolute astrometric reference
-as well as user-provided individual source catalogs for each image.
-These modifications are required for Pipeline versions <1.8, and so must 
-be used to fully recreate our DR0.5 reduction. These modifications were
-incorporated into the Pipeline starting with version 1.8.
+Pipeline TweakReg routine. Our main modification to the default TweakReg
+routine is the ability to specify user-provided catalogs. In v1.7, the 
+Pipeline had a limited number of absolute reference catalogs available,
+none of which worked for CEERS as they had too few sources. Additionally, 
+we found that the internal source detection routine was detecting too many 
+spurious sources in the input images, and the source detection parameters 
+were not easily tunable. Our modified version therefore accepts user-provided
+source catalogs for each input image as well as an absolute reference catalog.
 
-To use our modified Tweakreg, you first replace the installed Pipeline
+Our modifications are required for Pipeline versions <1.8, and so must 
+be used to fully recreate our DR0.5 reduction. To use our modified 
+TweakReg, you must replace the installed Pipeline routine with our 
+version of `tweakreg_step.py` that is available in this repo. However, 
+these modifications were incorporated into the Pipeline starting with 
+version 1.8, and so it may not be worth setting up our modified version. 
+
+<a name='updatewcs'></a>
+### Updating the WCS in Headers
+ 
+Instead, we recommend using the tweaked WCS models that we have saved from
+our run of TweakReg to update the WCS in the image headers. This will allow
+you to recreate our DR0.5 reduction without needing to alter your Pipeline
+installation. We provide the tweaked WCS models for all 690 images
+in the `batch_scripts/tweakreg_wcs` folder. 
+To use our saved WCS model to update the header of a single file cal 
+file (`jw01345001001_02201_00001_nrca1_rate.fits`):
+```
+python updatewcs.py --image jw01345001001_02201_00001_nrca1_rate.fits
+```
+To update the headers of all images in the specified `INPUTDIR`:
+```
+python updatewcs.py --all_images
+```
+
+**Customization Options:**
+
+At the top of `updatewcs.py`:
+* Input/output: provide the relative (or absolute) paths to the directory
+  containing the input calibrated files and the directory for the output,
+  corrected images. Default is `calibrated` for both.
+* Provide the directory containing the saved Tweakreg asdf files.
+  Default is `tweakreg_wcs`, which is packaged in the `batch_scripts` directory 
+  of this repo
+* Provide the file suffixes for the input images (default = 'cal') and the
+  the output images with updated WCS headers (default = 'tweakreg')
+
+
+<a name='newtweakreg'></a>
+### Running TweakReg in Pipeline v1.8+
+
+We provide a wrapper for TweakReg that works with **Pipeline versions 1.8+**,
+`run_tweakreg.py`. TweakReg should be run on each filter and visit separately.
+To run the wrapper on F115W images in the first visit of observation 1:
+```
+python run_tweakreg.py jw01345001001 f115w
+```
+The wrapper will look for all F115W images with the prefix `jw01345001001`
+that are in the specified INPUTDIR directory. It will group them into
+associations for each detector, run Source Extractor to detect source 
+positions using the windowed centroid coordinates, prepare the input
+catalogs, invoke TweakReg, and parse the TweakReg output into an output file
+called `tweakreg_results_all.jw01345001001.txt`. 
+
+TweakReg will first perform a relative alignment (e.g., all A1 detector 
+images aligned with each other) and will then perform an absolute aligment 
+with the provided reference catalog. The output file will summarize the X,Y 
+shifts, rotations and scalings of the relative and absolute astrometric fits 
+as well as the RMS of the alignments. To quickly view the results:
+```
+grep Relative tweakreg_results_all.jw01345001001.txt | sort
+grep Absolute tweakreg_results_all.jw01345001001.txt | sort
+```
+
+The wrapper requires a few files:
+
+* Source Extractor files - `sextractor.config`, `sextractor.conv`,
+  `sextractor.nnw` and `sextractor.outputs`. These are required to run 
+  the source detection on each individual input catalog, and should be 
+  in the working directory.
+* `tweakreg_log.cfg` - a Pipeline configuration file that sets the name of 
+  the TweakReg log file. The wrapper extracts a summary of the fit results
+  from the TweakReg log file. This config file should be present in the 
+  working directory.
+* `[filt].cfg` - a configuration file for each filter that specifies the 
+  TweakReg parameters for the fit. These config files (described more below)
+  should be in the input directory with the images.
+
+The parameters for the fits are set using configuration files, for example
+`f115w.cfg`. The wrapper will look for files called `filt.cfg`, where 
+`filt` is specified in the call to `run_tweakreg.py`.
+These config files should have one section for each visit during which 
+the filter was observed. For example, F115W was observed in visit 1 for 
+CEERS NIRCam1, so `f115w.cfg` would have:
+```
+[jw01345001001]
+# source finding parameters
+detect_thresh  = 4
+detect_minarea = 16
+deblend        = 4
+kernel_fwhm    = 1.5
+snr_threshold  = 2.5
+bkg_boxsize    = 100
+# Relative alignment: 
+minobj         = 20
+searchrad      = 1.0
+separation     = 0.1
+# Note: should always have tolerance < separation, to avoid duplicate matches
+tolerance      = 0.05     
+nclip          = 1
+sigma          = 0.7
+# Absolute alignment:
+abs_minobj     = 20
+abs_searchrad  = 1.0
+abs_separation = 0.2
+abs_tolerance  = 0.15
+abs_nclip      = 1
+abs_sigma      = 0.6
+abs_fitgeom    = rshift
+```
+If F115W had also been observed in visit 2, there would need to be a second 
+section with the ID `[jw01345001002]` so that the visits could be aligned
+separately. See the documentation for the [TweakReg routine](https://jwst-pipeline.readthedocs.io/en/latest/jwst/tweakreg/README.html) for more information 
+on each parameter.
+
+You may find the need to run TweakReg several times for a set of images in 
+order to determine the optimal parameters. 
+When you are happy with the astrometric fit, rerun the wrapper with the
+`save_results` kwarg. 
+```
+python run_tweakreg.py jw01345001001 f115w --save_results
+```
+This will write the output files, each image saved with the updated WCS.
+Additionally, it will save the WCS models (`*asdf` files) for later use so 
+you can update the WCS of future versions of the images without rerunning
+TweakReg (see [Updating the WCS in Headers](updatewcs) above).
+
+
+**Customization Options:**
+
+At the top of `run_tweakreg.py`:
+* Input/output: provide the relative (or absolute) paths to the directory
+  containing the input calibrated files and the directory for the output,
+  corrected images. Default is `calibrated` for both.
+* Provide the directory and filename of the absolute reference catalog.
+* Provide the file suffixes for the input images (default = 'cal') and the
+  the output images with updated WCS headers (default = 'tweakreg')
+* Provide the directory for saving the Tweakreg asdf files. Default 
+  is `tweakreg_wcs`
+
+
+<a name='oldtweakreg'></a>
+### Running TweakReg in Pipeline v<1.8
+
+To reproduce our DR0.5 reduction, we recommend using `updatewcs.py` with 
+the WCS models we provide in `batch_scripts/tweakreg_wcs`. However, if you
+want to run TweakReg from scratch using a Pipeline version <1.8, we provide a
+wrapper `run_tweakreg_1.7.py` and modified version of the TweakReg routine 
+`tweakreg_step.py` to work with it. 
+
+To use our modified Tweakreg, you must replace the installed Pipeline 
 routine with our version of `tweakreg_step.py`. First, identify where the 
 Pipeline is installed:
 ```
@@ -73,34 +226,12 @@ print(tweakreg_step.__file__)
 ```
 This will print the absolute path to the Pipeline version of 
 `tweakreg_step.py`. Replace the Pipeline script with the `tweakreg_step.py` 
-from this GitHub repo.
+from this GitHub repo. This step is necessary as the Pipeline version does 
+not allow for user-specified input and absolute reference catalogs.
 
-Next, we provide a wrapper to call the TweakReg step, `run_tweakreg.py`. 
-The wrapper runs Source Extractor on each individual input image to 
-detect the source positions using the windowed centroid coordinates, and 
-our modified `tweakreg_step.py` matches these input positions with the 
-sources in the absolute reference catalog.
-
-TweakReg should be run on each filter and visit separately. To run it on 
-F115W images in the first visit of observation 1:
-```
-python run_tweakreg.py jw01345001001 f115w 
-```
-The wrapper will look for all F115W images with the prefix `jw01345001001` 
-that are in the current working directory. It will group them into an 
-association file, run Source Extractor, prepare the input catalogs, invoke
-TweakReg, and parse the TweakReg output into an output file called 
-`tweakreg_results_all.jw01345001001.txt`. This output file will summarize
-the X,Y shifts, rotations and scalings of the relative and absolute 
-astrometric fits as well as the RMS of the alignments. 
-
-The parameters for the fits are set using configuration files, for example
-`f115w.cfg`. 
-
-```
-python run_tweakreg.py jw01345001001 f115w --save_fit
-```
-
+Next, you can run the wrapper `run_tweakreg_1.7.py` as described in the 
+above section ([Running TweakReg in Pipeline v1.8+](newtweakreg)), using
+the same method of config files for setting the parameters.
 
 
 <a name='outliers'></a>
