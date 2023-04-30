@@ -24,7 +24,7 @@ import argparse
 import numpy as np
 from astropy.io import fits
 import astropy.stats as astrostats
-from astropy.convolution import Ring2DKernel, Gaussian2DKernel
+from astropy.convolution import Ring2DKernel, Gaussian2DKernel, convolve_fft
 from scipy.optimize import curve_fit
 from scipy.ndimage import binary_dilation
 from scipy.ndimage import median_filter
@@ -206,7 +206,7 @@ def masksources(image):
 
     # save output mask
     outputbase = os.path.join(OUTPUTDIR, os.path.basename(image))
-    maskname = outputbase.replace('.fits', '_1fmask.fits'))
+    maskname = outputbase.replace('.fits', '_1fmask.fits')
     log.info('masksources: saving mask to %s'%maskname)
     outmask = np.zeros(finalmask.shape, dtype=int)
     outmask[finalmask] = 1
@@ -295,7 +295,7 @@ def measure_striping(image, origfilename, thresh=None, apply_flat=True, mask_sou
 
     model = ImageModel(image)
     log.info('Measuring image striping')
-    log.info('Working on %s'%os.path.basen(image))
+    log.info('Working on %s'%os.path.basename(image))
 
     # apply the flat to get a cleaner meausurement of the striping
     if apply_flat:
@@ -399,15 +399,15 @@ def measure_striping(image, origfilename, thresh=None, apply_flat=True, mask_sou
 
     # save horizontal and vertical patterns 
     if save_patterns:
-        fits.writeto(outbase.replace('.fits', '_horiz.fits'), 
+        fits.writeto(outputbase.replace('.fits', '_horiz.fits'), 
                      horizontal_striping, overwrite=True)
-        fits.writeto(outbase.replace('.fits', '_vert.fits'), 
+        fits.writeto(outputbase.replace('.fits', '_vert.fits'), 
                      vertical_striping, overwrite=True)
 
     model.close()
     
     # copy image 
-    log.info('Copying input to %s'%origfilename
+    log.info('Copying input to %s'%origfilename)
     shutil.copy2(image, origfilename)
 
     # remove striping from science image
@@ -447,8 +447,8 @@ def measure_striping(image, origfilename, thresh=None, apply_flat=True, mask_sou
         substr = util.create_history_entry(stepdescription, 
                                               software=software_dict)
         immodel.history.append(substr)
-        log.info('Saving cleaned image to %s'%outbase)
-        immodel.save(outbase)
+        log.info('Saving cleaned image to %s'%outputbase)
+        immodel.save(outputbase)
 
 
 def main():
@@ -460,7 +460,7 @@ def main():
     parser.add_argument('--thresh', type=float, 
                         help='The threshold (fraction of masked pixels in an amp-row) above which to switch to a full-row median')
     parser.add_argument('--save_patterns', action='store_true',
-                        hel='Save the horizontal and vertical striping patterns as FITS files')
+                        help='Save the horizontal and vertical striping patterns as FITS files')
     args = parser.parse_args()
     image = os.path.join(INPUTDIR, args.image)
 
