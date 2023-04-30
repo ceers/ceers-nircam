@@ -65,11 +65,8 @@ def run_ramp_fitting(datadir,dataset,rampfile,maxcores,output_dir="."):
     # Process using the run() method
     ramp_fit_step = RampFitStep()
     ramp_fit_step.output_dir = output_dir
+    ramp_fit_step.save_results = True
     ramp_fit_step.maximum_cores = maxcores
-
-    # Save the rampints if there's more than 1 integration
-    if jump.meta.exposure.nints > 1:
-        ramp_fit_step.save_results = True
 
     # Set to True to save optional ramp fit info, good for visualization
     ramp_fit_step.save_opt = False
@@ -86,12 +83,10 @@ def detector1_with_snowball_correction(dataset,input_dir=".",output_dir=".",maxc
     result = run_pipeline_to_create_ramp(input_file,output_dir=output_dir)
 
     # Revise the ramp file to put in the snowball mask
-    input_file = os.path.join(input_dir,f"{dataset}")
     rampfile = os.path.join(output_dir,f"{dataset}_ramp.fits")
     make_snowball_mask(rampfile)
 
     # Re run the ramp fitting step with the new ramp file
     ramp = run_ramp_fitting(input_dir,dataset,rampfile,maxcores,
                             output_dir=output_dir)
-
 

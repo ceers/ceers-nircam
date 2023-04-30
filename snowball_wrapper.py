@@ -13,7 +13,7 @@ OUTPUTDIR = 'calibrated'
 MAXCORES = 'half'
 # Set DELINTERIM to True to delete interim files to save space - *trapsfilled, 
 # *fitopt (if saved), *rateints (unnecessary, CEERS exposures have 1 int)
-DELINTERIM = True
+DELINTERIM = False
 #################################
 
 
@@ -34,16 +34,19 @@ def run_detector1_and_snowballs(dataset, inputdir, outputdir, maxcores):
 
     if DELINTERIM:
         # Now delete some of the interim files to save space
+        #   ramp - The output of the first run of the ramp fitting step,
+        #          with the updated GROUPDQ arrays flagging snowballs
         #   trapsfilled - The number of filled traps at each pixel at the
         #                 end of the exposure, output by the Persistence step
         #   fitopt - Optional output with fit info for each ramp segment 
         #            and pixel
         #   rampfitstep - The rateints file that contains slope, etc., for each
         #                 integration. CEERS exposures have only 1 integration
+        ramp = os.path.join(outputdir, '%s_ramp.fits'%dataset)
         trapsfilled = os.path.join(outputdir, '%s_trapsfilled.fits'%dataset)
         fitopt = os.path.join(outputdir, '%s_fitopt.fits'%dataset)
         rampfitstep = os.path.join(outputdir, '%s_1_rampfitstep.fits'%dataset)
-        for f in [trapsfilled, fitopt, rampfitstep]:
+        for f in [ramp, trapsfilled, fitopt, rampfitstep]:
             try:
                 os.remove(f)
             except OSError:
