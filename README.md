@@ -76,7 +76,9 @@ associated notebook for examples on how to run each stage of the pipeline. We
 note that these notebooks were created for simulated data and use a much older 
 version of the JWST Calibration Pipeline. However, they provide more detailed
 information on each step of the Pipeline as well as demonstrating various 
-methods for running the Pipeline. 
+methods for running the Pipeline. We also recommend JWebbinar3 and the
+[STScI Pipeline Documentation](https://jwst-pipeline.readthedocs.io/en/latest/) 
+for a more detailed explanation of each Pipeline step.
 
 Our CEERS NIRCam reduction makes use of a combination of the Pipeline `strun` 
 command and Python scripts/wrappers. The somewhat inconsistent nature of our 
@@ -87,14 +89,15 @@ contributed quickly to developing our procedures.
 <a name='versions'></a>
 ### Reduction Code Versions
 
-This represents v0.5. As time goes on, we may provide updates to our scripts 
-here. If you wish to download the version we used to produce DR0.5, use tag0.5: 
-```
-git clone 
-```
-| ceers-nircam Tag | Corresponding CEERS Data Release | Released   | jwst Version | CRDS pmap | Notes |
+This repository currently contains the code version we used to produce 
+[DR0.5](https://ceers.github.io/dr05.html).
+As time goes on, we may provide updates to our scripts here. In that case, we
+will tag this version of the repository and update the table below. In this 
+way, if you wish to download the version we used to produce DR0.5, you will 
+be able to clone the corresponding tag. 
+| ceers-nircam Tag | Corresponding CEERS Data Release | Released   | jwst Version | CRDS pmap |                                                          Notes |
 |------------------|----------------------------------|------------|--------------|-----------|-------|
-| 0.5              | DR0.5                            | 2023-04-05 | v1.7.2       | 0989      |       |
+| --               | DR0.5                            | 2023-04-05 | v1.7.2       | 0989      | Initial code release, reduction intended to be run in parallel |
 
 
 <a name='install'></a>
@@ -112,7 +115,7 @@ pip install jwst==1.7.2
 When running a Pipeline or Pipeline step, the Pipeline will automatically
 look for any required reference files in a pre-defined local directory. 
 If the required reference files are not present, they will automatically be
-downloaded from the Calibration Reference Data System (CRDS) at STScI. 
+downloaded from the [Calibration Reference Data System (CRDS)](https://jwst-crds.stsci.edu) at STScI. 
 
 You will need to specify a local directory to store the reference files
 and provide the server to use to download files from CRDS. To do this,
@@ -126,11 +129,23 @@ export CRDS_SERVER_URL=https://jwst-crds.stsci.edu
 This assumes you will store reference files in a directory `crds_cache` in 
 your home directory.
 
-Finally, to reproduce our reduction, please specify the same CRDS pipeline
+Next, to reproduce our reduction, please specify the same CRDS pipeline
 mapping (pmap) that we used in creating the DR0.5 reduction:
 ```
 export CRDS_CONTEXT=jwst_0989.pmap
 ```
+
+Finally, installing `jwst` will install any necessary dependencies, including 
+other STScI packages. If you have previously installed a higher version of 
+`jwst`, you may need to downgrade the `stcal` and `stdatamodels` packages to 
+work with `jwst` v1.7.2. If you encounter errors in Stage 1 processing related
+to missing modules or inconsistent datamodel structures, you may try:
+```
+pip install stcal==1.1.0
+pip install stdatamodels==0.4.3
+```
+These are the versons of the `stcal` and `stdatamodels` packages that were 
+available when v1.7.2 was the current release of `jwst`.
 
 
 <a name='download'></a>
@@ -138,7 +153,11 @@ export CRDS_CONTEXT=jwst_0989.pmap
 
 You can download data from the MAST web portal or using Astropy astroquery.
 We provide a script to download all CEERS NIRCam imaging raw files, sorted
-by pointing ID. 
+by pointing ID. First, download astroquery if it isn't already a part of your
+environment:
+```
+conda install -c conda-forge astroquery
+```
 
 To download all raw files from CEERS NIRCam pointing 1:
 ```
