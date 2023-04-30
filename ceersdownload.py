@@ -26,7 +26,7 @@ def download_ceers(pointing, cleanup=False, sort_files=False):
 
     # Download CEERS
     propid = '1345'
-    instrument = 'NIRCAM'
+    instrument = 'NIRCAM/IMAGE'
     filts = ['F115W','F150W','F200W','F277W','F356W','F410M','F444W']
 
     # get list of CEERS observations
