@@ -81,7 +81,7 @@ Wisp subtraction is described in Section 3.1.2 of [Bagley et al. (2023)](https:/
 
 We subtract the "wisp" features from detectors A3, A4, B3 and B4 of the F150W 
 and F200W images. We use the wisp templates provided by the NIRCam team that 
-were released on 2022 August 26 [(wisps_2022_08_26.tgz)](https://jwst-docs.stsci.edu/jwst-near-infrared-camera/nircam-features-and-caveats/nircam-claws-and-wisps).
+were released on 2022 August 26. (Wisps are described in the [JDox](https://jwst-docs.stsci.edu/jwst-near-infrared-camera/nircam-features-and-caveats/nircam-claws-and-wisps), and the templates are [hosted at STScI](https://stsci.app.box.com/s/1bymvf1lkrqbdn9rnkluzqk30e8o2bne) and called wisps_2022_08_26.tgz.).
 The wisp features can have a variable brightness from exposure to exposure, 
 and so our subtraction routine scales the templates to match the brightness 
 of the feature in each individual image. 
@@ -94,11 +94,12 @@ python wispsub.py jw01345001001_10201_00001_nrca3_rate.fits --fit_scaling
 
 The `--fit_scaling` option will attempt to determine the best scale factor
 that matches the strength of the feature in the given image, by minimizing 
-the variance of (image - coefficient * template).
+the variance of (image - scale * template).
 
 However, we find that for some images, it is necessary to override the 
 automatically-determined scaling factor, especially when bright sources, 
-artifacts, etc., cause the scaling function to over or under fit the scaling. 
+artifacts, etc., cause the scaling function to over or under fit the wisp
+feature. 
 
 To run the step on a single image when supplying a manual scale factor:
 ```
@@ -109,6 +110,12 @@ We inspected all of the CEERS wisp-subtracted rate files by eye and made a
 few manual adjustments. We provide the scaling factor for each individual 
 image in the `batch_scripts` directory for those who aim to reproduce our
 reduction.
+
+**Note:** This version of `wispsub.py` uses Photutils to identify sources 
+in the images before fitting the wisp feature. It has been tested successfully
+with Photutils v1.5.0, but may break for newer versions of Photutils, in 
+which the `make_source_mask` function was moved to a different part of the 
+module.
 
 
 **Customization Options:** 

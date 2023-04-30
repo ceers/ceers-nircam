@@ -385,8 +385,7 @@ def main():
                         help='Scaling factor to use instead of fitting (ignored if --fit_scaling=True). Default is 0.')
     args = parser.parse_args()
 
-    orig = os.path.basename(args.image).replace('.fits', '_prewisp.fits')
-    origfilename = os.path.join(OUTPUTDIR, orig)
+    origfilename = os.path.basename(args.image).replace('.fits','_prewisp.fits')
 
     fit_wisp_feature(args.image, origfilename, apply_flat=True, 
                      fit_scaling=args.fit_scaling, scale=args.scale)
