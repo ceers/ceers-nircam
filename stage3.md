@@ -1,6 +1,6 @@
 # Stage 3: Ensemble Processing
 
-Reduction scripts related to Stage 1 and our custom routines
+Reduction scripts related to Stage 3 and our custom routines
 
 <a name='top'></a>
 ## Table of contents
@@ -20,13 +20,13 @@ Reduction scripts related to Stage 1 and our custom routines
 <a name='summary'></a>
 ## Reduction Steps
 
-The Stage 3, ensemble processing is run on a set of images, for example all
+The Stage 3 ensemble processing is run on a set of images, for example all
 images from a single filter.
 
 As a summary, running the ensemble processing steps on all F150W images in 
 CEERS NIRCam pointing 1 would look like:
 ```
-python run_tweakreg.py jw01345001001 f150w 0
+python run_tweakreg.py jw01345001001 f150w --save_results
 strun image3_part1.asdf nircam1_f150w.json
 python skysub_wcs_varscale.py --all_images
 strun image3_nircam1.asdf nircam1_f150w_final.json

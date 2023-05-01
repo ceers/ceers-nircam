@@ -235,7 +235,7 @@ for our image reduction, and so these scripts were designed to be executed in
 parallel using a distributed computing system. These scripts provide one 
 command per line. 
 
-The scripts assume input directory called `uncals` (for stage 1 processing 
+The scripts assume an input directory called `uncals` (for stage 1 processing 
 only) and all processed outputs are saved in a directory called `calibrated`. 
 The READMEs for each Pipeline stage describe how the I/O paths and filenames
 can be changed in each reduction script.
