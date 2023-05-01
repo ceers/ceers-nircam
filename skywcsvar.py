@@ -289,10 +289,10 @@ def main():
         images = glob(os.path.join(INPUTDIR, '*_%s.fits'%FILE_SUFFIX))
 
         for image in images:
-            measure_sky(image, plot_sky=False)
+            process(os.path.basename(image), plot_sky=False)
 
     else:
-        measure_sky(args.image, plot_sky=False)
+        process(args.image, plot_sky=False)
 
 
 if __name__== '__main__':

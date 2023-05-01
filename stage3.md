@@ -99,7 +99,7 @@ At the top of `updatewcs.py`:
 * Input/output: provide the relative (or absolute) paths to the directory
   containing the input calibrated files and the directory for the output,
   corrected images. Default is `calibrated` for both.
-* Provide the path to the directory containing the saved Tweakreg asdf files.
+* Provide the path to the directory containing the saved TweakReg asdf files.
   Default is `tweakreg_wcs`, which is packaged in the `batch_scripts` directory 
   of this repo
 * Provide the file suffixes for the input images (default = 'cal') and the
@@ -169,31 +169,35 @@ Within `image3_part1.asdf`:
 We perform three additional corrections to the individual exposures, which are 
 described in Section 3.3.2 of [Bagley et al. (2023)](https://ui.adsabs.harvard.edu/abs/2023ApJ...946L..12B/abstract).
 
-First, rescale the variance maps to include the sky RMS fluctuations. we run 
+First, we rescale the variance maps to include the sky RMS fluctuations. We run 
 a background subtraction routine that creates a 2D model of the background 
 in an image. This saves a 2D background-subtracted version of the cal file 
-but does not alter the original cal file. We only want to subtract a pedestal 
-from the images before stacking, the 2D background subtraction routine can 
-oversubtract in regions around extended/low surface brightness sources. 
+but does not alter the original cal file. (We only want to subtract a pedestal 
+from the images before stacking, and the 2D background subtraction routine can 
+oversubtract in regions around extended/low surface brightness sources.) We 
+calculate the sky variance in each of the 2D-background-subtracted cal files
+and scale the read-noise variance array (`VAR_RNOISE`) to reproduce this value.
 
 Next we subtract a pedestal value in MJy/sr from each exposure, necessary
-because the SkyMatch routine of jwst does not successfully match the background
+because the Pipeline SkyMatch routine does not successfully match the background
 across all detectors. The tiered source masks created during the 
 [1/f noise step](stage1.md) are used to mask source flux. We then fit a 
 Gaussian to the distribution of unmasked, sigma-clipped pixel fluxes and 
 subtract the peak of the Gaussian from the image. 
 
 Finally, we fill 'holes' in the variance maps. In v1.7.2 and previous versions 
-of the jwst Pipeline, we found that known bad pixels had values of exactly 
+of the Pipeline, we found that known bad pixels had values of exactly 
 zero in the variance arrays. In these areas, the input error array with the 
 missing data or bad pixel did not contribute to the rms of the affected output
-pixel during drizzling. We set these pixels to infinity in the individual 
-variance maps to correctly down-weight bad pixels during drizzling.
+pixel during drizzling. The corresponding pixels in the output error array had 
+relatively low rms compared with the average, and spurious source detections
+were more prevelent in these areas. We set these pixels to infinity in the 
+individual variance maps to correctly down-weight bad pixels during drizzling.
 
 All three of these steps are performed with the script `skywcsvar.py`. If
-necessary, this script will also update the WCS from saved Tweakred `asdf` 
+necessary, this script will also update the WCS from saved TweakReg `asdf` 
 files. In this way, you can create multiple reduction versions without needing
-to rerun Tweakreg. If the Tweakreg step is not identified as 'complete' in the
+to rerun TweakReg. If the TweakReg step is not identified as 'complete' in the
 image header, `skywcsvar.py` will look for the correspdonding `*_tweakreg.asdf`
 and update the datamodel accordinly.
 
@@ -214,7 +218,7 @@ At the top of `skywcsvar.py`:
 * Input/output: provide the relative (or absolute) paths to the directory
   containing the input calibrated files and the directory for the output,
   corrected images. Default is `calibrated` for both.
-* Provide the directory containing the saved Tweakreg asdf files if the 
+* Provide the directory containing the saved TweakReg asdf files if the 
   WCS in the input images has not already been updated/tweaked
 * Provide the file suffixes for the input images (default = 'crf'), the
   output 2D background subtracted images ('bkgsub1'), and the output 
