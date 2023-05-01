@@ -57,14 +57,14 @@ __all__ = ['TweakRegStep']
 
 ###XXX XXX XXX Added by Anton Koekemoer July 2022
 #
-def read_tweakreg_catalog(model, suffix):
+def read_tweakreg_catalog(model, suffix, iodir):
       #
       filename = model.meta.instance['filename']
       #
       filename_suffix_orig = str.split(filename,'_')[-1]
-      print(filename_suffix_orig)
       #
-      catfile = filename.replace(filename_suffix_orig, suffix)
+      catfile = os.path.join(iodir,filename.replace(filename_suffix_orig, 
+                                                    suffix))
       #
       catalog = Table.read(catfile, format='ascii')
       #
@@ -111,8 +111,9 @@ class TweakRegStep(Step):
         ALIGN_INDIV_EXPS    = boolean(default=True)  # If False, individual exposure alignment is skipped, if True then usual tweakreg behaviour
         OVERRIDE_INDIV_CATS = boolean(default=False) # If True, use user-provided source catalogs for individual image alignment.
         ALIGN_TO_USER_CAT   = boolean(default=True)  # If True, use a user-provided absolute astrometry reference catalog. 
-        USER_REF_CAT        = string(default='/Users/mb59688/projects/jwst/ceers/CANDELS_F160W_v2.cat')  # Full path to absolute astrometry catalog
+        USER_REF_CAT        = string(default='CEERS_EGS_HST_v1.9_cat_radecmag.ecsv')  # Full path to absolute astrometry catalog
         SUFFIX_INDIV_CATS   = string(default='customcat.cat')  # Replaces, eg  "crf.fits" with "customcat.cat"
+        INDIV_CAT_DIR   = string(default='./')  # Input directory for individual input catalogs
         abs_searchrad   = float(default=2.0)    # For absolute astrometry, the search radius in arcsec for a match
         abs_separation  = float(default=1.0)    # For absolute astrometry, the minimum object separation in arcsec
         abs_use2dhist   = boolean(default=True) # For absolute astrometry, use 2d histogram to find initial offset?
@@ -133,6 +134,7 @@ class TweakRegStep(Step):
         ALIGN_TO_USER_CAT   = self.ALIGN_TO_USER_CAT  
         USER_REF_CAT        = self.USER_REF_CAT
         SUFFIX_INDIV_CATS   = self.SUFFIX_INDIV_CATS
+        INDIV_CAT_DIR       = self.INDIV_CAT_DIR
 
         try:
             images = datamodels.ModelContainer(input)
@@ -156,7 +158,8 @@ class TweakRegStep(Step):
             ###XXX XXX XXX  Actual code to read in catalog added by Anton Koekemoer July 2022
             if OVERRIDE_INDIV_CATS:
                 ###catalog = image_model.catalog
-                catalog = read_tweakreg_catalog(image_model, SUFFIX_INDIV_CATS)
+                catalog = read_tweakreg_catalog(image_model, SUFFIX_INDIV_CATS, 
+                                                INDIV_CAT_DIR)
             else:
                 catalog = make_tweakreg_catalog(
                     image_model, self.kernel_fwhm, self.snr_threshold,

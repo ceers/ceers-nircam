@@ -42,6 +42,7 @@ def update_wcs(cal):
     print('%s base: %s'%(cal, base))
     # directory of asdf wcs from tweakregged images
     tweakwcs = os.path.join(TWEAKDIR, '%s_tweakreg.asdf'%base)
+
     tweakreg = asdf.open(tweakwcs)
 
     wcs = tweakreg['wcs']
@@ -69,7 +70,7 @@ def main():
         images = glob(os.path.join(INPUTDIR, '*_%s.fits'%FILE_SUFFIX))
 
         for image in images:
-            update_wcs(image)
+            update_wcs(os.path.basename(image))
 
     else:
         update_wcs(args.image)

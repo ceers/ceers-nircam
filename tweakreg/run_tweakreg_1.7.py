@@ -57,6 +57,11 @@ def save_wcs(calimage):
     f.tree['filename'] = model.meta.filename
     f.tree['wcsinfo'] = model.meta.wcsinfo.instance
     f.tree['wcs'] = wcs
+    # check that output dir exists
+    try:
+        os.makedirs(TWEAKDIR)
+    except FileExistsError:
+        pass
     f.write_to(os.path.join(TWEAKDIR,
                os.path.basename(calimage.replace('fits','asdf'))))
 
@@ -95,7 +100,7 @@ def make_image_catalogs(imgfile_list, params, rerun_catalogs=False):
     for filename in sefiles:
         if (not os.path.exists(filename)):
             print('Missing %s, copy to working directory'%filename)
-           exit()
+            exit()
 
     for imgfile in imgfile_list:
       imgfile_sci  = imgfile[:-5] + '_sci.fits'
@@ -166,7 +171,7 @@ def extract_results(tweakreg_logfile, imgfile_list, sca_n, results):
             i += 1
             line = lines[i]
             #
-            if (line.find('tweakwcs.imalign - INFO - Aligning image catalog \'GROUP ID: '+imgfile[:-5]) >= 0):
+            if (line.find('stpipe.tweakreg - INFO - Aligning image catalog \'GROUP ID: '+os.path.basename(os.path.splitext(imgfile)[0])) >= 0):
                 #
                 result_found = False
                 nmatch = -1
@@ -177,16 +182,16 @@ def extract_results(tweakreg_logfile, imgfile_list, sca_n, results):
                     line = lines[i]
                     line_split = str.split(line)
                     #
-                    if (line.find('tweakwcs.wcsimage - INFO - XSH') >= 0):
+                    if (line.find('stpipe.tweakreg - INFO - XSH') >= 0):
                         xsh, ysh = float(line_split[8]), float(line_split[10])
                     #
-                    if (line.find('tweakwcs.wcsimage - INFO - FIT RMSE') >= 0):
+                    if (line.find('stpipe.tweakreg - INFO - FIT RMSE') >= 0):
                         rmse, mae = float(line_split[9]), float(line_split[12])
                     #
-                    if (line.find('tweakwcs.wcsimage - INFO - Final solution based on') >= 0):
+                    if (line.find('stpipe.tweakreg - INFO - Final solution based on') >= 0):
                         nmatch = int(float(line_split[11]))
                     #
-                    if (line.find('tweakwcs.wcsimage - WARNING - Not enough matches') >= 0):
+                    if (line.find('stpipe.tweakreg - WARNING - Not enough matches') >= 0):
                         xsh, ysh, rmse, mae, nmatch = 0, 0, 0, 0, 0
                     #
                     # Finally, at this point a "result" has been found, either way
@@ -214,7 +219,7 @@ def extract_results(tweakreg_logfile, imgfile_list, sca_n, results):
         i += 1
         line = lines[i]
         #
-        if (line.find('tweakwcs.imalign - INFO - Aligning image catalog \'GROUP ID: 876543') >= 0):
+        if (line.find('stpipe.tweakreg - INFO - Aligning image catalog \'GROUP ID: 876543') >= 0):
             #
             n += 1
             if (n == sca_n):	# only do it for the current SCA, ie skip it for all the preceding instances in this logfile.
@@ -228,16 +233,16 @@ def extract_results(tweakreg_logfile, imgfile_list, sca_n, results):
                 line = lines[i]
                 line_split = str.split(line)
                 #
-                if (line.find('tweakwcs.wcsimage - INFO - XSH') >= 0):
+                if (line.find('stpipe.tweakreg - INFO - XSH') >= 0):
                     xsh, ysh, rot, scale = float(line_split[8]), float(line_split[10]), float(line_split[12]), float(line_split[14])
                 #
-                if (line.find('tweakwcs.wcsimage - INFO - FIT RMSE') >= 0):
+                if (line.find('stpipe.tweakreg - INFO - FIT RMSE') >= 0):
                     rmse, mae = float(line_split[9]), float(line_split[12])
                 #
-                if (line.find('tweakwcs.wcsimage - INFO - Final solution based on') >= 0):
+                if (line.find('stpipe.tweakreg - INFO - Final solution based on') >= 0):
                     nmatch = int(float(line_split[11]))
                 #
-                if (line.find('tweakwcs.wcsimage - WARNING - Not enough matches') >= 0):
+                if (line.find('stpipe.tweakreg - WARNING - Not enough matches') >= 0):
                     xsh, ysh, rot, scale, rmse, mae, nmatch = 0, 0, 0, 0, 0, 0, 0
                 #
                 # Finally, at this point a "result" has been found, either way
@@ -299,7 +304,7 @@ def run_tweakregstep(visitstr, filt, save_results):
 
         # Make SE catalogs for each image using windowed coords and 
         # save in format expected by TweakReg
-        make_image_catalogs(imgfile_list, catfile)
+        make_image_catalogs(imgfile_list, params)
         
         # Create asn file for visit
         asn_name = '_'.join([visitstr, sca])
@@ -319,7 +324,7 @@ def run_tweakregstep(visitstr, filt, save_results):
         # harcoded parameters are ones that are unlikely to change
         tweakreg_output = TweakRegStep.call(asn_file,
                         catalog_format      = 'ecsv',
-                        save_catalogs       = True,
+                        save_catalogs       = False,
                         # set to False for faster turnaround when 
                         # iterating / testing parameters
                         save_results        = save_results,	
@@ -329,23 +334,7 @@ def run_tweakregstep(visitstr, filt, save_results):
                         # object detection, though we're not using it so it
                         # doesn't really matter
                         kernel_fwhm         = float(params['kernel_fwhm']),
-                        kernel_nsigma       = float(params['kernel_nsigma']),,
                         snr_threshold       = float(params['snr_threshold']),
-                        # npixels needs to be larger than simple 3x3 boxes 
-                        # around bad pixels
-                        npixels             = 16,
-                        bkg_boxsize         = int(params['bkg_boxsize']),
-                        bkg_filtersize      = 3,
-                        bkg_sigmaclip       = 3.0,
-                        deblend             = True,
-                        # number of deblending levels; default of 32 can be 
-                        # a bit extreme, lower values give less deblending
-                        nlevels             = 4,
-                        # contrast for deblending; default of 0.001 can be 
-                        # a bit extreme, higher values give less deblending
-                        contrast            = 0.1,
-                        connectivity        = 8,
-                        mode                = 'exponential',
                         ## Relative Alignment
                         minobj              = int(params['minobj']),
                         searchrad           = float(params['searchrad']),
@@ -362,8 +351,9 @@ def run_tweakregstep(visitstr, filt, save_results):
                         OVERRIDE_INDIV_CATS = True,
                         ALIGN_TO_USER_CAT   = True,
                         USER_REF_CAT        = abs_refcat,
+                        INDIV_CAT_DIR       = IODIR,
                         # suffix of input source catalogs for each image
-                        SUFFIX_INDIV_CATS   = 'crf_cat.idxy.ecsv',
+                        SUFFIX_INDIV_CATS   = 'cal_cat.idxy.ecsv',
                         ## Absolute Alignment
                         align_to_gaia       = False,
                         abs_use2dhist       = True,
@@ -377,8 +367,7 @@ def run_tweakregstep(visitstr, filt, save_results):
                         abs_tolerance       = float(params['abs_tolerance']),
                         abs_nclip           = int(params['abs_nclip']),
                         abs_sigma           = float(params['abs_sigma']),
-                        abs_fitgeometry     = params['abs_fitgeom'])
-
+                        abs_fitgeometry     = params['abs_fitgeom'],
                         logcfg              = 'tweakreg_log.cfg')
 
         # Find log file to parse output
@@ -390,8 +379,8 @@ def run_tweakregstep(visitstr, filt, save_results):
         if save_results:
             # save the tweaked WCS for assignment to other reduction versions
             for image in imgfile_list:
-                tweakimage = image.replace('%s.fits'%FILE_SUFFIX,
-                                           '*tweakreg.fits')
+                tweakimage = os.path.basename(image).replace(
+                                          '%s.fits'%FILE_SUFFIX,'tweakreg.fits')
                 save_wcs(tweakimage)
 
     outfile = open(tweakreg_results,'w')
@@ -402,14 +391,14 @@ def run_tweakregstep(visitstr, filt, save_results):
 def main():
     parser = argparse.ArgumentParser(description='A wrapper for TweakReg (Pipeline <1.8)')
     parser.add_argument('visitstr', type=str,
-                        help='String of ')
+                        help='String of program+observation+visit ID of images to run through TweakReg (for example: jw01345001001)')
     parser.add_argument('filt', type=str,
                         help='Filter to run through TweakReg. All calibrated images in IODIR with visitstr, FILE_SUFFIX and filt will be grouped together. Wrapper looks for config file called [filt].cfg.')
     parser.add_argument('--save_results', action='store_true',
                         help='Save results of fit. This takes extra time and is not recommended while iterating on parameters.')
     args = parser.parse_args()
 
-    run_tweakregstep(args.visitstr, args.filt, args.saveres)
+    run_tweakregstep(args.visitstr, args.filt, args.save_results)
 
 
 if __name__ == '__main__':
