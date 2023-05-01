@@ -69,8 +69,8 @@ not as tunable as needed. Our modified version therefore accepts user-provided
 source catalogs for each input image as well as an absolute reference catalog.
 
 Our modifications are required for Pipeline versions <1.8, and so must 
-be used to fully recreate our DR0.5 reduction. To use our modified 
-TweakReg, you must replace the installed Pipeline routine with our 
+be used to fully recreate our DR0.5 reduction from scratch. To use our 
+modified TweakReg, you must replace the installed Pipeline routine with our 
 version of `tweakreg_step.py` that is available in this repo. However, 
 these modifications were incorporated into the Pipeline starting with 
 version 1.8, and so it may not be worth setting up our modified version. 
@@ -109,9 +109,9 @@ At the top of `updatewcs.py`:
 <a name='runningtweakreg'></a>
 ### Running TweakReg 
 
-We provide a wrapper for running TweakReg in the `tweakreg` directory, along 
-with several other required files and an explanation of how to run the wrapper 
-on a set of images.
+We provide a wrapper for running TweakReg in the [`tweakreg` directory](tweakreg), 
+along with several other required files and [an explanation of how to run the 
+wrapper](tweakreg/README.md) on a set of images.
 
 Whether you choose to apply our tweaked WCS models for each image using
 [`updatewcs.py`](#updatewcs) or run the routine yourself, you must align 
