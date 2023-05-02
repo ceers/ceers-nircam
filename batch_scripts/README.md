@@ -35,8 +35,9 @@ scripts are executed in the following order:
   and removes a sky pedestal, scales the readnoise variance maps to include 
   an estimate of the sky RMS and fills holes in the variance maps
 * `make_mosaics.run` - Creates a mosaic for each pointing and filter 
-* `mosaic_background.run` - Runs the 2D background subtraction on the mosaic 
-  images
+* `python mosaic_background.py pointing --add_hst` - Runs the 2D background 
+  subtraction on the mosaic images from pointing (e.g., `nircam1`) and 
+  includes HST imaging in the merged source mask.
 
 Note that the Stage 3 scripts in the `all` directory (the `*final.json` 
 association files and `image3_full.asdf` parameter file) are set up to create 
