@@ -4,16 +4,16 @@
 %TAG ! tag:stsci.edu:asdf/
 --- !core/asdf-1.1.0
 asdf_library: !core/software-1.0.0 {author: The ASDF Developers, homepage: 'http://github.com/asdf-format/asdf',
-  name: asdf, version: 2.14.1}
+  name: asdf, version: 2.11.1}
 history:
   extensions:
   - !core/extension_metadata-1.0.0
     extension_class: asdf.extension.BuiltinExtension
-    software: !core/software-1.0.0 {name: asdf, version: 2.14.1}
+    software: !core/software-1.0.0 {name: asdf, version: 2.11.1}
 class: jwst.pipeline.calwebb_image3.Image3Pipeline
 meta:
   author: <SPECIFY>
-  date: '2022-12-20T22:01:47'
+  date: '2022-07-13T19:03:25'
   description: Parameters for calibration step jwst.pipeline.calwebb_image3.Image3Pipeline
   instrument: {name: <SPECIFY>}
   origin: <SPECIFY>
@@ -23,8 +23,8 @@ meta:
   useafter: <SPECIFY>
 name: Image3Pipeline
 parameters:
-  input_dir: calibrated
-  output_dir: calibrated
+  input_dir: ''
+  output_dir: null
   output_ext: .fits
   output_file: null
   output_use_index: true
@@ -39,7 +39,7 @@ steps:
 - class: jwst.assign_mtwcs.assign_mtwcs_step.AssignMTWcsStep
   name: assign_mtwcs
   parameters:
-    input_dir: calibrated
+    input_dir: ''
     output_dir: null
     output_ext: .fits
     output_file: null
@@ -54,25 +54,17 @@ steps:
 - class: jwst.tweakreg.tweakreg_step.TweakRegStep
   name: tweakreg
   parameters:
-    abs_fitgeometry: rshift
-    abs_minobj: 15
-    abs_nclip: 3
-    abs_refcat: ''
-    abs_searchrad: 6.0
-    abs_separation: 0.1
-    abs_sigma: 3.0
-    abs_tolerance: 0.7
-    abs_use2dhist: true
-    bkg_boxsize: 400
+    align_to_gaia: false
     brightest: 200
     catalog_format: ecsv
-    catfile: ''
     enforce_user_order: false
     expand_refcat: false
-    fitgeometry: rshift
-    input_dir: calibrated
-    kernel_fwhm: 2.5
-    minobj: 15
+    fitgeometry: shift
+    gaia_catalog: GAIADR2
+    input_dir: ''
+    kernel_fwhm: 1.444
+    min_gaia: 5
+    minobj: 1000000
     nclip: 3
     output_dir: null
     output_ext: .fits
@@ -82,23 +74,18 @@ steps:
     peakmax: null
     post_hooks: []
     pre_hooks: []
-    roundhi: 1.0
-    roundlo: -1.0
-    save_abs_catalog: false
     save_catalogs: false
+    save_gaia_catalog: false
     save_results: false
     search_output_file: true
     searchrad: 2.0
-    separation: 1.0
-    sharphi: 1.0
-    sharplo: 0.2
+    separation: 2.0
     sigma: 3.0
     skip: true
     snr_threshold: 10.0
     suffix: null
-    tolerance: 0.7
+    tolerance: 1.0
     use2dhist: true
-    use_custom_catalogs: false
     xoffset: 0.0
     yoffset: 0.0
 - class: jwst.skymatch.skymatch_step.SkyMatchStep
@@ -106,7 +93,7 @@ steps:
   parameters:
     binwidth: 0.1
     dqbits: ~DO_NOT_USE+NON_SCIENCE
-    input_dir: calibrated
+    input_dir: ''
     lower: null
     lsigma: 4.0
     match_down: true
@@ -136,8 +123,7 @@ steps:
     fillval: INDEF
     good_bits: ~DO_NOT_USE
     grow: 1
-    in_memory: false
-    input_dir: calibrated
+    input_dir: ''
     kernel: square
     maskpt: 0.7
     nhigh: 0
@@ -168,7 +154,6 @@ steps:
     crpix: [31584.5,9043.5]
     crval: [214.825,52.825]
     fillval: INDEF
-    in_memory: true
     input_dir: ''
     kernel: square
     output_dir: null
@@ -199,9 +184,9 @@ steps:
     ci1_star_threshold: 2.0
     ci2_star_threshold: 1.8
     deblend: false
-    input_dir: calibrated
+    input_dir: ''
     kernel_fwhm: 2.0
-    npixels: 25
+    npixels: 8
     output_dir: null
     output_ext: .fits
     output_file: null
@@ -209,9 +194,9 @@ steps:
     output_use_model: false
     post_hooks: []
     pre_hooks: []
-    save_results: false
+    save_results: true
     search_output_file: true
     skip: true
-    snr_threshold: 3.0
+    snr_threshold: 2.0
     suffix: cat
 ...

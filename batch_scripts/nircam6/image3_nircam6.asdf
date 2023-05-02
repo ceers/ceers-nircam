@@ -4,16 +4,16 @@
 %TAG ! tag:stsci.edu:asdf/
 --- !core/asdf-1.1.0
 asdf_library: !core/software-1.0.0 {author: The ASDF Developers, homepage: 'http://github.com/asdf-format/asdf',
-  name: asdf, version: 2.13.0}
+  name: asdf, version: 2.11.1}
 history:
   extensions:
   - !core/extension_metadata-1.0.0
     extension_class: asdf.extension.BuiltinExtension
-    software: !core/software-1.0.0 {name: asdf, version: 2.13.0}
+    software: !core/software-1.0.0 {name: asdf, version: 2.11.1}
 class: jwst.pipeline.calwebb_image3.Image3Pipeline
 meta:
   author: <SPECIFY>
-  date: '2022-10-03T18:05:37'
+  date: '2022-07-13T19:03:25'
   description: Parameters for calibration step jwst.pipeline.calwebb_image3.Image3Pipeline
   instrument: {name: <SPECIFY>}
   origin: <SPECIFY>
@@ -54,24 +54,17 @@ steps:
 - class: jwst.tweakreg.tweakreg_step.TweakRegStep
   name: tweakreg
   parameters:
-    abs_fitgeometry: rshift
-    abs_minobj: 15
-    abs_nclip: 3
-    abs_refcat: ''
-    abs_searchrad: 6.0
-    abs_separation: 0.1
-    abs_sigma: 3.0
-    abs_tolerance: 0.7
-    abs_use2dhist: true
-    bkg_boxsize: 400
+    align_to_gaia: false
     brightest: 200
     catalog_format: ecsv
     enforce_user_order: false
     expand_refcat: false
     fitgeometry: shift
+    gaia_catalog: GAIADR2
     input_dir: ''
     kernel_fwhm: 1.444
-    minobj: 15
+    min_gaia: 5
+    minobj: 1000000
     nclip: 3
     output_dir: null
     output_ext: .fits
@@ -81,16 +74,12 @@ steps:
     peakmax: null
     post_hooks: []
     pre_hooks: []
-    roundhi: 1.0
-    roundlo: -1.0
-    save_abs_catalog: false
     save_catalogs: false
+    save_gaia_catalog: false
     save_results: false
     search_output_file: true
     searchrad: 2.0
     separation: 2.0
-    sharphi: 1.0
-    sharplo: 0.2
     sigma: 3.0
     skip: true
     snr_threshold: 10.0
@@ -134,7 +123,6 @@ steps:
     fillval: INDEF
     good_bits: ~DO_NOT_USE
     grow: 1
-    in_memory: false
     input_dir: ''
     kernel: square
     maskpt: 0.7
@@ -166,7 +154,6 @@ steps:
     crpix: [7351.5,3500.5]
     crval: [214.825,52.825]
     fillval: INDEF
-    in_memory: true
     input_dir: ''
     kernel: square
     output_dir: null
@@ -199,7 +186,7 @@ steps:
     deblend: false
     input_dir: ''
     kernel_fwhm: 2.0
-    npixels: 25
+    npixels: 8
     output_dir: null
     output_ext: .fits
     output_file: null
@@ -207,9 +194,9 @@ steps:
     output_use_model: false
     post_hooks: []
     pre_hooks: []
-    save_results: false
+    save_results: true
     search_output_file: true
     skip: true
-    snr_threshold: 3.0
+    snr_threshold: 2.0
     suffix: cat
 ...
