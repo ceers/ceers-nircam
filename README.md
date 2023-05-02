@@ -160,11 +160,15 @@ in version 1.6.0. If you have previously installed a higher version of
 pip install photutils==1.5.0
 ```
 
-Finally, our scripts for [astrometric alignment](tweakreg/README.md) will 
+Finally, our wrapper for [running TweakReg](tweakreg/README.md) will 
 require Source Extractor, which can be installed via conda:
 ```
 conda install -c conda-forge astromatic-source-extractor
 ```
+Source Extractor is not needed if you choose to skip running TweakReg from 
+scratch and instead update the image headers with our saved WCS models 
+[as described here](stage3.md#updatewcs).
+
 
 <a name='download'></a>
 ### Downloading Data
