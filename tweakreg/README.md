@@ -76,8 +76,8 @@ At the top of `updatewcs.py`:
 ### Running TweakReg in Pipeline v1.8+
 
 We provide a wrapper for TweakReg (`run_tweakreg.py`) that works with 
-**Pipeline versions 1.8+**. We recommend running the wrapper in a separate
-directory, as it creates many output files in both the current working 
+**Pipeline versions 1.8+**. You may find it easier to run the wrapper in a 
+separate directory, as it creates many output files in both the current working 
 directory and the input directory containing the images to be tweaked. 
 We suggest moving or copying the `*cal.fits` files output by Stage 2 to the 
 `tweakreg` directory or a subdirectory separate from the `calibrated` directory
@@ -97,7 +97,36 @@ called `tweakreg_results_all.jw01345001001.txt`.
 
 TweakReg will first perform a relative alignment (e.g., all A1 detector 
 images aligned with each other) and will then perform an absolute aligment 
-with the provided reference catalog. The output file will summarize the X,Y 
+with the provided reference catalog. For CEERS DR0.5, we used a catalog of 
+sources detected in the EGS HST F160W mosaic (the mosaic is available at
+[CEERS HDR1](https://ceers.github.io/hdr1.html)) as the absolute astrometric
+reference: `CEERS_EGS_HST_v1.9_cat_radecmag.ecsv`.
+
+The wrapper creates several files. For each input image:
+* `*_sci.fits` - the science extension of the input cal image saved as a 
+  separate file for Source Extractor
+* `*_rms.fits` - the ERR map of the input cal image saved as a separate 
+  file for Source Extractor
+* `*_cat.idxy/ecsv` - the Source Extractor catalog reformatted for TweakReg
+
+For each set of detector images (for example all detector A1 images from F115W):
+* `jw01345003001_nrca1.json` - association files grouping all input images 
+  from the specified observation, visit, and filter
+* `tweakreg_jw01345003001_nrca1.log` - output log file from the relative and 
+  absolute astrometric fits for this group of images
+
+Overall output files:
+* `tweakreg_results_all.jw01345003001.txt` - the overall output file 
+  summarizing the relative and absolute astrometric fits for all groups of 
+  images
+* `tweakreg_out.log` - the TweakReg log file, that is overwritten each time 
+  the wrapper calls TweakReg. This log file is copied to the detector-specific
+  log files (`tweakreg_jw01345003001_nrca1.log`) that are saved for reference.
+  The info for `tweakreg_results_all.jw013450*.txt` is extracted from this log 
+  file. 
+
+
+The output file (`tweakreg_results_all.jw013450*.txt`) will summarize the X,Y 
 shifts, rotations and scalings of the relative and absolute astrometric fits 
 as well as the RMS of the alignments. To quickly view the results:
 ```
@@ -107,6 +136,8 @@ grep Absolute tweakreg_results_all.jw01345001001.txt | sort
 
 The wrapper requires a few files:
 
+* `CEERS_EGS_HST_v1.9_cat_radecmag.ecsv` - the absolute astrometric reference
+  catalog (or specify your own catalog with the `ABS_REFCAT` global variable)
 * Source Extractor files - `se.config`, `se.conv`,
   `se.nnw` and `se.outputs`. These are required to run 
   the source detection on each individual input catalog, and should be 
