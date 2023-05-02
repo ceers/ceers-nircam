@@ -102,24 +102,27 @@ sources detected in the EGS HST F160W mosaic (the mosaic is available at
 [CEERS HDR1](https://ceers.github.io/hdr1.html)) as the absolute astrometric
 reference: `CEERS_EGS_HST_v1.9_cat_radecmag.ecsv`.
 
-The wrapper creates several files. For each input image:
+The wrapper creates several files. For each input image, the following are 
+saved to `INPUTDIR` with the input images:
 * `*_sci.fits` - the science extension of the input cal image saved as a 
   separate file for Source Extractor
 * `*_rms.fits` - the ERR map of the input cal image saved as a separate 
   file for Source Extractor
-* `*_cat.idxy/ecsv` - the Source Extractor catalog reformatted for TweakReg
+* `*_cat.idxy.ecsv` - the Source Extractor catalog reformatted for TweakReg
 
-For each set of detector images (for example all detector A1 images from F115W):
+For each set of detector images (for example all detector A1 images from F115W),
+the following are saved in the working directory:
 * `jw01345003001_nrca1.json` - association files grouping all input images 
-  from the specified observation, visit, and filter
+  from the specified observation/visit (`jw01345003001`) and filter by 
+  NIRCam detector (`nrca1`)
 * `tweakreg_jw01345003001_nrca1.log` - output log file from the relative and 
   absolute astrometric fits for this group of images
 
-Overall output files:
+Overall output files saved in the working directory:
 * `tweakreg_results_all.jw01345003001.txt` - the overall output file 
   summarizing the relative and absolute astrometric fits for all groups of 
   images
-* `tweakreg_out.log` - the TweakReg log file, that is overwritten each time 
+* `tweakreg_out.log` - the TweakReg log file, which is overwritten each time 
   the wrapper calls TweakReg. This log file is copied to the detector-specific
   log files (`tweakreg_jw01345003001_nrca1.log`) that are saved for reference.
   The info for `tweakreg_results_all.jw013450*.txt` is extracted from this log 
@@ -133,6 +136,12 @@ as well as the RMS of the alignments. To quickly view the results:
 grep Relative tweakreg_results_all.jw01345001001.txt | sort
 grep Absolute tweakreg_results_all.jw01345001001.txt | sort
 ```
+
+**Note** - these output files (`jw013450*_nrc*.json`, `tweakreg_jw013450*_nrc*.log`, `tweakreg_results_all.jw013450*.txt`) will be overwritten each time you 
+call the wrapper. When you are happy with the fit for a filter, save the 
+outputs in a separate directory to avoid overwriting them with the next filter.
+This behavior is partially by design, to make sure each filter is run 
+through TweakReg separately.
 
 The wrapper requires a few files:
 
