@@ -32,7 +32,7 @@ update_wcs.run
 image3_part1.run
 skysub_varscale.run
 make_mosaics.run
-mosaic_background.run
+python mosaic_background.py nircam3 --add_hst
 ```
 
 ## File List
@@ -48,4 +48,23 @@ are needed to reduce CEERS NIRCam3:
 * `nircam3_[filter]_final.json` - Association files of all images for the 
   given filter, listing images with the `*a3001_match.fits` suffix for use
   with `image3_nircam3.asdf`
+
+
+## Note on TweakReg
+
+We encountered issues aligning NIRCam3 to the HST F160W mosaic, specifically 
+for a ~1' region in the quadrant of the mosaic mostly covered by the B2 
+detector where astrometric offsets from NIRCam-to-HST are large (~0.05"). 
+One possible explanation is that the HST F160W exposures for the particular 
+visit in that part of the mosaic were affected by a low-level guide star 
+tracking issue. 
+
+We therefore followed a different process for aligning this NIRCam pointing. 
+We first aligned F277W to F160W, excluding all sources in the upper left 
+quadrant of detector BLONG from the fit. We then used F277W rather than F160W
+as the reference catalog for all other filters in this pointing. See
+Section 3.3.1 of [Bagley et al. (2023)](https://ui.adsabs.harvard.edu/abs/2023ApJ...946L..12B/abstract) for more information. 
+The `*tweakreg.asdf` files in `tweakreg_wcs/` account for this change in our 
+TweakReg method for NIRCam3, and we again recommend using these saved WCS
+models instead of running TweakReg from scratch. 
 

@@ -32,7 +32,7 @@ update_wcs.run
 image3_part1.run
 skysub_varscale.run
 make_mosaics.run
-mosaic_background.run
+python mosaic_background.py nircam1 --add_hst
 ```
 
 ## File List

@@ -33,8 +33,16 @@ update_wcs.run
 image3_part1.run
 skysub_varscale.run
 make_mosaics.run
-mosaic_background.run
+python mosaic_background.py epoch1 --add_hst
 ```
+
+The scripts in this directory are set up to create combined mosaics 
+of all four pointings. These mosaics can require a very significant amount of 
+memory. We did not release these Epoch1 mosaics in DR0.5, but provide the 
+scripts here in case you wish to create the full mosaics. Note that if you 
+want to include HST images in the merged source mask for the mosaic background
+subtraction step (`add_hst`), then you will need to create cutouts of the 
+HST mosaics that are available at [CEERS HDR1](https://ceers.github.io/hdr1.html).
 
 ## File List
 

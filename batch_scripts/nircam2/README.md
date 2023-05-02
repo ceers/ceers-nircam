@@ -32,7 +32,7 @@ update_wcs.run
 image3_part1.run
 skysub_varscale.run
 make_mosaics.run
-mosaic_background.run
+python mosaic_background.py nircam2 --add_hst
 ```
 
 Note that CEERS NIRCam2 has additional imaging in F200W and F444W 
