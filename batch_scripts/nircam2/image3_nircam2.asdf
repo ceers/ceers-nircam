@@ -24,7 +24,7 @@ meta:
 name: Image3Pipeline
 parameters:
   input_dir: ''
-  output_dir: null
+  output_dir: calibrated
   output_ext: .fits
   output_file: null
   output_use_index: true
@@ -40,7 +40,7 @@ steps:
   name: assign_mtwcs
   parameters:
     input_dir: ''
-    output_dir: null
+    output_dir: calibrated
     output_ext: .fits
     output_file: null
     output_use_index: true
@@ -66,7 +66,7 @@ steps:
     min_gaia: 5
     minobj: 1000000
     nclip: 3
-    output_dir: null
+    output_dir: calibrated
     output_ext: .fits
     output_file: null
     output_use_index: true
@@ -98,7 +98,7 @@ steps:
     lsigma: 4.0
     match_down: true
     nclip: 10
-    output_dir: null
+    output_dir: calibrated
     output_ext: .fits
     output_file: null
     output_use_index: true
@@ -128,7 +128,7 @@ steps:
     maskpt: 0.7
     nhigh: 0
     nlow: 0
-    output_dir: null
+    output_dir: calibrated
     output_ext: .fits
     output_file: null
     output_use_index: true
@@ -156,7 +156,7 @@ steps:
     fillval: INDEF
     input_dir: ''
     kernel: square
-    output_dir: null
+    output_dir: calibrated
     output_ext: .fits
     output_file: null
     output_shape: [11000,6450]
@@ -187,7 +187,7 @@ steps:
     input_dir: ''
     kernel_fwhm: 2.0
     npixels: 8
-    output_dir: null
+    output_dir: calibrated
     output_ext: .fits
     output_file: null
     output_use_index: true
