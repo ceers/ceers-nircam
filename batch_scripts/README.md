@@ -8,17 +8,11 @@ and so these scripts were designed to be executed in parallel using a
 distributed computing system. Almost all of these scripts therefore provide 
 one command per line.
 
-The scripts assume input directory called `uncals` (for stage 1 processing
+The scripts assume an input directory called `uncals` (for stage 1 processing
 only) and all processed outputs are saved in a directory called `calibrated`.
 We describe each reduction step in the READMEs for [Stage1](../stage1.md), 
 [Stage2](../stage2.md) and [Stage3](../stage3.md), and also explain how to 
 change the input/output options in each reduction script.
-
-We provide the output WCS calculated by our runs of the tweakreg step for 
-each pointing, along with the Python code that will apply this tweaked WCS
-to each image header. Therefore, you do not need to run the TweakReg step 
-yourself, and can use the `updatewcs.py` script instead to use the CEERS
-astrometry from DR0.5.
 
 We provide scripts to reduce the CEERS NIRCam pointings individually in the
 directories `nircam1`, `nircam2`, etc., as well as scripts to reduce all 
@@ -48,3 +42,18 @@ Note that the Stage 3 scripts in the `all` directory (the `*final.json`
 association files and `image3_full.asdf` parameter file) are set up to create 
 combined mosaics of all four pointings. These mosaics can require a 
 very significant amount of memory. 
+
+
+### TweakReg
+
+**`tweakreg_wcs/`** - We provide the output WCS calculated by our runs of the 
+tweakreg step for each pointing, along with the Python code that will apply 
+this tweaked WCS to each image header (`updatewcs.py`). Therefore, you do not 
+need to run the TweakReg step yourself, and can use the `updatewcs.py` script 
+instead to use the CEERS astrometry from DR0.5.
+
+**`tweakreg_cfgs/`** - If you do choose to run TweakReg from scratch using
+our wrapper (`run_tweakreg.py`, or `run_tweakreg_1.7.py`), we provide the 
+configuration files containing the fit parameters for each pointing and 
+filter.
+
