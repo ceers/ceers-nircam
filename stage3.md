@@ -207,7 +207,7 @@ python skywcsvar.py --image jw01345001001_10201_00001_nrca1_a3001_crf.fits
 ```
 
 Alternatively, you can run it on all images with a given filename suffix by 
-setting the global variable FILE_SUFFIX and running it as:
+setting the global variable `FILE_SUFFIX` and running it as:
 ```
 python skywcsvar.py --all_images
 ```
@@ -252,14 +252,15 @@ strun image3_nircam1.asdf nircam1_f150w_final.json
 
 The `nircam[pointing]_[filter]_final.json` association files list the same 
 images as `nircam[pointing]_[filter].json`, but with the updated filename
-suffixes that include 
+suffixes of the images that have been tweakregged, background subtracted, 
+and have scaled variance maps.
 
 We note that in Bagley et al. (2023), we mentioned using two different 
 parameter files for creating SW and LW mosaics, where the only difference was
 the input-to-output pixel size ratio. This was a holdover from an earlier
-version of the pipeline where that distinction was necessary. The pixel 
-size ratio parameter is now ignored if the pixel scale is set, and so we 
-have only a single parameter file for all filters.
+version of the pipeline where that distinction was necessary for correct 
+header information. The pixel size ratio parameter is now ignored if the pixel 
+scale is set, and so we have only a single parameter file for all filters.
 
 **Customization Options:**
 
@@ -294,9 +295,9 @@ estimating background and anything non-zero is not used.
  - Merge the masks from each filter for the pointing
  - In some cases "hand edit" the masks to remove spurious sources near the 
    borders or patches of scattered light that were identified as astronomical 
-   sources to be masked.
+   sources to be masked. 
  - After this editing, merge all of the masks from HST and JWST (with the 
-   possible excception of bands where the mask was not very useful -- e.g. 
+   possible exception of bands where the mask was not very useful -- e.g. 
    F105W for some fields where there is not much area overlap).
  - Re-measure the background for each image using this merged mask
 
@@ -325,6 +326,8 @@ NIRCam pointing on the CEERS website:
 [ceers.github.io/dr05.html](https://ceers.github.io/dr05.html). 
 These cutouts are taken from the full HST mosaics available at 
 [ceers.github.io/hdr1.html](https://ceers.github.io/hdr1.html).
+
+Note that this step can take ~30 minutes per filter.
 
 
 **Customization Options:**

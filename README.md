@@ -8,6 +8,7 @@ Reduction scripts for CEERS NIRCam imaging public data releases
 * [This Repository](#repo-purpose)
   * [Reduction Code Versions](#versions)
 * [Installation and Set-up](#install)
+  * [Additional packages and software](#requiredpackages)
   * [Downloading Data](#download)
 * [Stage 1: Detector-level Corrections](#stage1)
 * [Stage 2: Individual Image Calibrations](#stage2)
@@ -135,6 +136,7 @@ mapping (pmap) that we used in creating the DR0.5 reduction:
 export CRDS_CONTEXT=jwst_0989.pmap
 ```
 
+<a name='requiredpackages'></a>
 ### Additional packages and software
 Installing `jwst` will install any necessary dependencies, including 
 other STScI packages. If you have previously installed a higher version of 
@@ -158,14 +160,14 @@ in version 1.6.0. If you have previously installed a higher version of
 pip install photutils==1.5.0
 ```
 
-Finally, scripts for [astrometric alignment](tweakreg/README.md) will require 
-Source Extractor, which can be installed via conda:
+Finally, our scripts for [astrometric alignment](tweakreg/README.md) will 
+require Source Extractor, which can be installed via conda:
 ```
 conda install -c conda-forge astromatic-source-extractor
 ```
 
 <a name='download'></a>
-## Downloading Data
+### Downloading Data
 
 You can download data from the MAST web portal or using Astropy astroquery.
 We provide a script to download all CEERS NIRCam imaging raw files, sorted
