@@ -135,7 +135,8 @@ mapping (pmap) that we used in creating the DR0.5 reduction:
 export CRDS_CONTEXT=jwst_0989.pmap
 ```
 
-Finally, installing `jwst` will install any necessary dependencies, including 
+### Additional packages and software
+Installing `jwst` will install any necessary dependencies, including 
 other STScI packages. If you have previously installed a higher version of 
 `jwst`, you may need to downgrade the `stcal` and `stdatamodels` packages to 
 work with `jwst` v1.7.2. If you encounter errors in Stage 1 processing related
@@ -147,6 +148,21 @@ pip install stdatamodels==0.4.3
 These are the versons of the `stcal` and `stdatamodels` packages that were 
 available when v1.7.2 was the current release of `jwst`.
 
+Our source masking procedures (used for the [1/f noise subtracion](stage1.md) 
+and [sky background subtraction](stage3.md) require a `Photutils` function 
+called `make_source_masks`, which was moved to a different part of the module 
+in version 1.6.0. If you have previously installed a higher version of 
+`Photutils`, you may need to downgrade. If you encounter errors when running
+`remstriping.py`, you may try:
+```
+pip install photutils==1.5.0
+```
+
+Finally, scripts for [astrometric alignment](tweakreg/README.md) will require 
+Source Extractor, which can be installed via conda:
+```
+conda install -c conda-forge astromatic-source-extractor
+```
 
 <a name='download'></a>
 ## Downloading Data
