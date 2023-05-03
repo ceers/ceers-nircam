@@ -160,8 +160,8 @@ in version 1.6.0. If you have previously installed a higher version of
 pip install photutils==1.5.0
 ```
 
-Finally, our wrapper for [running TweakReg](tweakreg/README.md) will 
-require Source Extractor, which can be installed via conda:
+Finally, our wrapper for [running TweakReg](tweakreg/README.md#newtweakreg) 
+will require Source Extractor, which can be installed via conda:
 ```
 conda install -c conda-forge astromatic-source-extractor
 ```

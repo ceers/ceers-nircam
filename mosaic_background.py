@@ -9,6 +9,7 @@ import os
 from glob import glob
 import argparse
 from configparser import ConfigParser
+import pprint
 import numpy as np
 from astropy import units as u
 from astropy.io import fits
@@ -25,6 +26,8 @@ import background_subtraction
 #################################
 ### SET I/O AND OTHER SETUP HERE 
 IODIR = 'calibrated'
+# directory of HST images if including in merged mask
+HSTDIR = 'hst'
 # Filename of merged source mask
 OUTMASK = 'merged_mask.fits'
 # Suffix of 2D background subtracted images using individual masks
@@ -39,15 +42,26 @@ def run_background_and_tiermask(image):
 
     """
     # get background parameters for image filter
-    filt = fits.getheader(image, 0)['FILTER']
-
-    if filt in ['F115W', 'F150W', 'F200W', 'F277W', 'F356W', 'F410M', 'F444W']:
-        section = 'nircam'
-    else:
-        section = filt.lower()
-
     cfg = ConfigParser()
     cfg.read('mosaic_background.cfg')
+    sections = cfg.sections()
+
+    hdr0 = fits.getheader(image, 0)
+
+    # check JWST vs HST
+    if hdr0['TELESCOP'] == 'JWST':
+        section = 'nircam'
+        inputdir = IODIR
+
+    elif hdr0['TELESCOP'] == 'HST':
+        inputdir = HSTDIR
+        if hdr0['INSTRUME'] == 'ACS':
+            f1 = hdr0['FILTER1']
+            f2 = hdr0['FILTER2']
+            section = f1.lower() if f1.lower() in sections else f2.lower()
+        elif hdr0['INSTRUME'] == 'WFC3':
+            section = hdr0['FILTER'].lower()
+
     options = cfg.options(section)
     params = {}
     for option in options:
@@ -75,7 +89,7 @@ def run_background_and_tiermask(image):
     pprint.pprint(bs.__dict__)
     print("")
 
-    bs.do_background_subtraction(IODIR, image)
+    bs.do_background_subtraction(inputdir, os.path.basename(image))
 
 
 def merge_masks(bkgfiles):
@@ -86,13 +100,19 @@ def merge_masks(bkgfiles):
         with fits.open(bkgfile) as hdu:
 
             # HST and NIRCam file extensions are different
-            if hdu[0].header['TELESCOP'] == 'HST':
-                sci_extension = 0
-            else:
-                sci_extension = 'SCI'
+#            if hdu[0].header['TELESCOP'] == 'HST':
+#                sci_extension = 0
+#            else:
+#                sci_extension = 'SCI'
 
-            if hdu[sci_extension].header['FILTER'] == 'F277W':
-                wcs = WCS(hdu[sci_extension].header)
+            # take WCS for mask from F277W
+            try:
+                if hdu[0].header['FILTER'] == 'F277W':
+                    wcs = WCS(hdu['SCI'].header)
+            except KeyError:
+                # ACS uses FILTER1 and FILTER2
+                # but doesn't matter, taking WCS from F277W
+                pass
             input_tiermask = hdu['TIERMASK'].data
             # Bordermask is bit 1...clear that
             this_source_mask = np.left_shift(np.right_shift(input_tiermask,1),1)
@@ -112,7 +132,8 @@ def run_final_background_subtraction(image):
     """ """
     # get tiermask from bgk-subtracted image to get bordermask specific 
     # to this filter image
-    bkgimage = image.replace('i2d',BKG_SUFFIX)
+    base = '_'.join(os.path.splitext(image)[0].split('_')[:-1])
+    bkgimage = '%s_%s.fits'%(base,BKG_SUFFIX)
     with fits.open(bkgimage) as hdumask:
         bordermask = hdumask['TIERMASK'].data == 1 
 
@@ -129,6 +150,7 @@ def run_final_background_subtraction(image):
         sci_extension = 'SCI'
 
     sci = hdu[sci_extension].data
+    wcs = WCS(hdu[sci_extension].header)
 
     bkg = Background2D(sci,
                        box_size = 10,
@@ -152,8 +174,8 @@ def run_final_background_subtraction(image):
     hdu.append(bkgmask)
 
     # Write out the file
-    outfile = image.replace('i2d', MERGED_BKG_SUFFIX)
-    hdu.writeto(os.path.join(IODIR, outfile), overwrite=True)
+    outfile = '%s_%s.fits'%(base,MERGED_BKG_SUFFIX)
+    hdu.writeto(outfile, overwrite=True)
     hdu.close()
 
 
@@ -168,21 +190,32 @@ def main():
     # get list of mosaics for background subtraction
     images = glob(os.path.join(IODIR, 'ceers_%s_*i2d.fits'%args.pointing))
     images.sort()
+
     # Include HST images
     if args.add_hst:
         hstimages = glob(os.path.join(HSTDIR, 
-                         'egs_all_*_030mas_v1.9_%s_*;'*args.pointing))
+                         'egs_all_*_030mas_v1.9_%s_*'%args.pointing))
         hstimages.sort()
         images = images + hstimages
 
     # first run background subtraction on each mosaic individually to 
     # mask sources
     for image in images:
-        run_background_and_tiermask(os.path.join(IODIR, image))
-            
+        run_background_and_tiermask(image)
+    
     # now merge source masks from all available filters, using the BKG_SUFFIX
     # images that include the individual source masks as an extension
-    bkgimages = glob(os.path.join(IODIR, '*_%s.fits'%BKG_SUFFIX))
+    bkgimages = glob(os.path.join(IODIR, 'ceers_%s_*_%s.fits'%(args.pointing,
+                                                                BKG_SUFFIX)))
+    # Include HST bkgsub images
+    if args.add_hst:
+        hstbkgimages = glob(os.path.join(HSTDIR,
+                         'egs_all_*_030mas_v1.9_%s_*%s.fits'%(args.pointing,
+                                                             BKG_SUFFIX)))
+        hstbkgimages.sort()
+        bkgimages = bkgimages + hstbkgimages
+
+
     bkgimages.sort()
     merge_masks(bkgimages)
 

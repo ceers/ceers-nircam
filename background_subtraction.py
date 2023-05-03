@@ -64,8 +64,12 @@ class SubtractBackground:
 
     def open_file(self,directory,fitsfile):
         with fits.open(path.join(directory,fitsfile)) as hdu:
-            sci = hdu[1].data
-            err = hdu[2].data
+            sci = hdu['SCI'].data
+            try:
+                err = hdu['ERR'].data
+            except KeyError:
+                # RMS map for HST
+                err = hdu['RMS'].data
             self.has_dq = False
             for h in hdu:
                 if 'EXTNAME' in h.header:
@@ -288,11 +292,11 @@ class SubtractBackground:
         outfile = f"{prefix}_{self.suffix}.fits"
         outpath = path.join(datadir,outfile)
         hdu = fits.open(path.join(datadir,fitsfile))
-        wcs = WCS(hdu[1].header) # Attach WCS to it
+        wcs = WCS(hdu['SCI'].header) # Attach WCS to it
         # Replace or append the background-subtracted image
         # Replace
         if self.replace_sci:
-            hdu[1].data = bkgd_subtracted
+            hdu['SCI'].data = bkgd_subtracted
         # Append 
         else:
             newhdu = fits.ImageHDU(bkgd_subtracted,header=wcs.to_header(),name='BKGSUB')

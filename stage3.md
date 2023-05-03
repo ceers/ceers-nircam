@@ -319,15 +319,21 @@ To include HST imaging:
 ```
 python mosaic_background.py nircam1 --add_hst
 ```
-This will include the source masks from the HST images in the merged mask. 
-The HST images will also be background subtracted, though those images already
-have backgrounds close to zero. The HST imaging is available for each CEERS 
-NIRCam pointing on the CEERS website: 
+This will include the source masks from the HST images in the merged mask.
+The HST images will also be background subtracted, though the HST mosaics 
+already have backgrounds close to zero.
+The HST imaging is available for each CEERS NIRCam pointing on the CEERS 
+website: 
 [ceers.github.io/dr05.html](https://ceers.github.io/dr05.html). 
 These cutouts are taken from the full HST mosaics available at 
 [ceers.github.io/hdr1.html](https://ceers.github.io/hdr1.html).
+Note that the HST image cutouts available through DR0.5 have already been 
+background-subtracted and include the merged tiermask as an extension, and so 
+there is no need to include them in the mosaic background subtraction step. 
+One could instead only include them in the mask merge to account for 
+HST-detected sources and source footprints.
 
-Note that this step can take ~30 minutes per filter.
+Note that this step can take ~30 minutes to an hour per filter.
 
 
 **Customization Options:**
