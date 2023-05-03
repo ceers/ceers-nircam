@@ -1,4 +1,4 @@
-# Wrapper for TweakReg in jwst v1.8+
+# Wrapper for TweakReg in jwst v<1.8
 #
 
 __author__ = "Anton M. Koekemoer, STScI"
@@ -92,7 +92,7 @@ def make_image_catalogs(imgfile_list, params, rerun_catalogs=False):
         *cat.txt: output catalog file from SE for each input image
         *cat.idxy.ecsv: simplified output catalog for each input image, 
             including source ID, windowed centroid positions, and AUTO flux,
-            and saved as an ecsv for TweakReg            
+            and saved as an ecsv for TweakReg
     """
 
     sefiles = ['se.config', 'se.conv', 'se.nnw', 'se.outputs']
@@ -103,19 +103,19 @@ def make_image_catalogs(imgfile_list, params, rerun_catalogs=False):
             exit()
 
     for imgfile in imgfile_list:
-      imgfile_sci  = imgfile[:-5] + '_sci.fits'
-      imgfile_rms  = imgfile[:-5] + '_rms.fits'
-      imgfile_cat  = imgfile[:-5] + '_cat.txt'
-      catfile_idxy = imgfile_cat = imgfile[:-5] + '_cat.idxy.ecsv'
+        imgfile_sci  = imgfile[:-5] + '_sci.fits'
+        imgfile_rms  = imgfile[:-5] + '_rms.fits'
+        imgfile_cat  = imgfile[:-5] + '_cat.txt'
+        catfile_idxy = imgfile_cat = imgfile[:-5] + '_cat.idxy.ecsv'
 
-      if (not os.path.exists(catfile_idxy)):
-        data_sci = fits.getdata(imgfile, 'SCI')
-        data_rms = fits.getdata(imgfile, 'ERR')
-        # for now, best to just use a flat value for rms
-        data_rms[:,:] = np.median(data_rms[np.where(data_rms != 0)]) 
+        if (not os.path.exists(catfile_idxy)):
+            data_sci = fits.getdata(imgfile, 'SCI')
+            data_rms = fits.getdata(imgfile, 'ERR')
+            # for now, best to just use a flat value for rms
+            data_rms[:,:] = np.median(data_rms[np.where(data_rms != 0)])
 
-        fits.writeto(imgfile_sci, data_sci, overwrite=True)
-        fits.writeto(imgfile_rms, data_rms, overwrite=True)
+            fits.writeto(imgfile_sci, data_sci, overwrite=True)
+            fits.writeto(imgfile_rms, data_rms, overwrite=True)
 
         if (os.path.exists(catfile_idxy)) & (not rerun_catalogs):
             print('%s exists, skipping'%catfile_idxy)
@@ -253,12 +253,21 @@ def extract_results(tweakreg_logfile, imgfile_list, sca_n, results):
 
 
 def run_tweakregstep(visitstr, filt, save_results):
-    """ 
+    """A wrapper to prepare input catalogs, run TweakReg, and extract results
 
     Args:
-        visitstr
-        filt
-        save_results (bool): set to False to save time while iterating 
+        visitstr (str): String of program+observation+visit ID of images to run through TweakReg (for example: jw01345001001)
+        filt (str): Filter to run through TweakReg. All calibrated images with visitstr and filt will be grouped together
+        save_results (bool): If True, save results of fits by writing output *tweakreg.fits files. Set to False to save time while iterating
+
+    Outputs:
+        [visitstr]_[filt]_nrc*.json - association files grouping input images
+            by NIRCam detector
+        tweakreg_[visitstr]_[filt]_nrc*.log - output log file from the relative
+            and absolute astrometric fits for this group of images
+        tweakreg_results_all.[viststr]_[filt].txt - overall output file 
+            summarizing the relative and absolute astrometric fits for all 
+            groups of images
     """
     # Set up the absolute astrometric reference catalog
     abs_refcat = os.path.join(CATDIR, ABS_REFCAT)
@@ -286,7 +295,7 @@ def run_tweakregstep(visitstr, filt, save_results):
         if (not sca in sca_list): sca_list.append(sca)
     sca_list.sort()
 
-    tweakreg_results = 'tweakreg_results_all.%s.txt' % visitstr
+    tweakreg_results = 'tweakreg_results_all.%s_%s.txt' % (visitstr, filt)
 
     results = []
     results.append('Absolute/Relative     Filename                                        NMATCH    RMSE(arcsec)  MAE(arcsec)   XSH(arcsec)   YSH(arcsec)   ROT(deg)      SCALE\n')
@@ -307,7 +316,7 @@ def run_tweakregstep(visitstr, filt, save_results):
         make_image_catalogs(imgfile_list, params)
         
         # Create asn file for visit
-        asn_name = '_'.join([visitstr, sca])
+        asn_name = '_'.join([visitstr, filt, sca])
         asn_file = '.'.join([asn_name, 'json'])
         if (not os.path.exists(asn_file)):
             asn = asn_from_list.asn_from_list(imgfile_list,
