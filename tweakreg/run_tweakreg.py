@@ -6,9 +6,9 @@ __version__ = "1.0.0"
 __license__ = "BSD3"
 
 # Version history
-# 1.0.0 -- M Bagley, UT Austin, edited be compatible with jwst v1.8+ TweakReg;
-#          moving source detection parameters to config file; adding routine
-#          to save wcs models
+# 1.0.0 -- M Bagley, UT Austin, edited be compatible with jwst v1.8+ TweakReg
+# 0.5.0 -- M Bagley, UT Austin, moving source detection parameters to config 
+#          file adding routine to save wcs models
 # 0.4.0 -- Micaela Bagley, UT Austin, edited to use configuration files for
 #          each filter, reducing unused imports
 # 0.3.0 -- Switching to using user-supplied source catalogs for each input
@@ -18,7 +18,7 @@ __license__ = "BSD3"
 
 
 import os
-import sys 
+import sys
 from glob import glob
 import argparse
 from configparser import ConfigParser
@@ -59,6 +59,11 @@ def save_wcs(calimage):
     f.tree['filename'] = model.meta.filename
     f.tree['wcsinfo'] = model.meta.wcsinfo.instance
     f.tree['wcs'] = wcs
+    # check that output dir exists
+    try:
+        os.makedirs(TWEAKDIR)
+    except FileExistsError:
+        pass
     f.write_to(os.path.join(TWEAKDIR,
                os.path.basename(calimage.replace('fits','asdf'))))
 
@@ -88,7 +93,7 @@ def make_image_catalogs(imgfile_list, params, rerun_catalogs=False):
         *cat.txt: output catalog file from SE for each input image
         *cat.idxy.ecsv: simplified output catalog for each input image, 
             including source ID, windowed centroid positions, and AUTO flux,
-            and saved as an ecsv for TweakReg  
+            and saved as an ecsv for TweakReg
     """
 
     sefiles = ['se.config', 'se.conv', 'se.nnw', 'se.outputs']
@@ -98,18 +103,17 @@ def make_image_catalogs(imgfile_list, params, rerun_catalogs=False):
             print('Missing %s, copy to working directory'%filename)
             exit()
 
-
     for imgfile in imgfile_list:
         imgfile_sci  = imgfile[:-5] + '_sci.fits'
         imgfile_rms  = imgfile[:-5] + '_rms.fits'
         imgfile_cat  = imgfile[:-5] + '_cat.txt'
         catfile_idxy = imgfile_cat = imgfile[:-5] + '_cat.idxy.ecsv'
 
-        if (not os.path.exists(imgfile_sci)):
+        if (not os.path.exists(catfile_idxy)):
             data_sci = fits.getdata(imgfile, 'SCI')
             data_rms = fits.getdata(imgfile, 'ERR')
             # for now, best to just use a flat value for rms
-            data_rms[:,:] = np.median(data_rms[np.where(data_rms != 0)])  
+            data_rms[:,:] = np.median(data_rms[np.where(data_rms != 0)])
    
             fits.writeto(imgfile_sci, data_sci, overwrite=True)
             fits.writeto(imgfile_rms, data_rms, overwrite=True)
@@ -163,13 +167,12 @@ def extract_results(tweakreg_logfile, imgfile_list, sca_n, results):
     for imgfile in imgfile_list[1:]:
         #
         i = -1
-        #
         while (i < nlines-1):
             #
             i += 1
             line = lines[i]
             #
-            if (line.find('stpipe.tweakreg - INFO - Aligning image catalog \'GROUP ID: '+imgfile[:-5]) >= 0):
+            if (line.find('stpipe.tweakreg - INFO - Aligning image catalog \'GROUP ID: '+os.path.basename(os.path.splitext(imgfile)[0])) >= 0):
                 #
                 result_found = False
                 nmatch = -1
@@ -197,9 +200,11 @@ def extract_results(tweakreg_logfile, imgfile_list, sca_n, results):
                     if (nmatch > -1):
                         result_found = True
                         results.append('Relative alignment:   %46s  %6i  %12.8f  %12.8f  %12.8f  %12.8f\n'  % (imgfile, nmatch, rmse, mae,  xsh, ysh))
+
+
     # Now look for the absolute alignment results 
     # this is hardcoded to look for x,y shifts, rotation, and scale
-    
+    #
     # Note: unfortunately this logfile is cumulative, so each time this 
     # subroutine is called, it's necessary to skip the first several 
     # instances of "GROUP ID: 987654" until we reach the value of the 
@@ -208,64 +213,67 @@ def extract_results(tweakreg_logfile, imgfile_list, sca_n, results):
     # It's rather kluddy but is just a consequence of the logfile being 
     # cumulative for all the SCA runs.
     #
-    # Except now, we're creating a new logfile each time?
-    # so the sca_n thing doesn't work for finding the Absolute calibration
     n = 0
     i = -1
     while (i < nlines-1):
-      #
-      i += 1
-      line = lines[i]
-      #
-      if (line.find('stpipe.tweakreg - INFO - Aligning image catalog \'GROUP ID: 987654') >= 0):
         #
-        n += 1
-        if (n == sca_n):	# only do it for the current SCA, ie skip it for all the preceding instances in this logfile.
-          #
-          result_found = False
-          nmatch = -1
-          #
-          while ((not result_found) and (i < nlines-1)):
+        i += 1
+        line = lines[i]
+        #
+        if (line.find('stpipe.tweakreg - INFO - Aligning image catalog \'GROUP ID: 987654') >= 0):
             #
-            i += 1
-            line = lines[i]
-            line_split = str.split(line)
-            #
-            if (line.find('stpipe.tweakreg - INFO - XSH') >= 0):
-              try:
-                xsh, ysh, rot, scale = float(line_split[8]), float(line_split[10]), float(line_split[12]), float(line_split[14])
-              except IndexError:
-                xsh, ysh = float(line_split[8]), float(line_split[10])
-                rot = 0
-                scale = 0
-            #
-            if (line.find('stpipe.tweakreg - INFO - FIT RMSE') >= 0):
-              rmse, mae = float(line_split[9]), float(line_split[12])
-            #
-            if (line.find('stpipe.tweakreg - INFO - Final solution based on') >= 0):
-              nmatch = int(float(line_split[11]))
-            #
-            if (line.find('stpipe.tweakreg - WARNING - Not enough matches') >= 0):
-              xsh, ysh, rot, scale, rmse, mae, nmatch = 0, 0, 0, 0, 0, 0, 0
-            #
-            # Finally, at this point a "result" has been found, either way
-            #
-            if (nmatch > -1):
-              result_found = True
-              results.append('Absolute alignment:   %-46s  %6i  %12.8f  %12.8f  %12.8f  %12.8f  %12.8f  %12.8f\n'  % (tweakreg_logfile[9:-4], nmatch, rmse, mae,  xsh, ysh, rot, scale))
+            n += 1
+            if (n == sca_n):	# only do it for the current SCA, ie skip it for all the preceding instances in this logfile.
+                #
+                result_found = False
+                nmatch = -1
+                #
+                while ((not result_found) and (i < nlines-1)):
+                    #
+                    i += 1
+                    line = lines[i]
+                    line_split = str.split(line)
+                    #
+                    if (line.find('stpipe.tweakreg - INFO - XSH') >= 0):
+                        xsh, ysh, rot, scale = float(line_split[8]), float(line_split[10]), float(line_split[12]), float(line_split[14])
+                    # 
+                    if (line.find('stpipe.tweakreg - INFO - FIT RMSE') >= 0):
+                        rmse, mae = float(line_split[9]), float(line_split[12])
+                    #
+                    if (line.find('stpipe.tweakreg - INFO - Final solution based on') >= 0):
+                        nmatch = int(float(line_split[11]))
+                    #
+                    if (line.find('stpipe.tweakreg - WARNING - Not enough matches') >= 0):
+                        xsh, ysh, rot, scale, rmse, mae, nmatch = 0, 0, 0, 0, 0, 0, 0
+                    #
+                    # Finally, at this point a "result" has been found, either way
+                    #
+                    if (nmatch > -1):
+                        result_found = True
+                        results.append('Absolute alignment:   %-46s  %6i  %12.8f  %12.8f  %12.8f  %12.8f  %12.8f  %12.8f\n'  % (tweakreg_logfile[9:-4], nmatch, rmse, mae,  xsh, ysh, rot, scale))
 
 
 
 def run_tweakregstep(visitstr, filt, save_results):
-    """ 
+    """A wrapper to prepare input catalogs, run TweakReg, and extract results
 
-    Passing each input catalog as part of the asn file. This worked better
-    than ... 
+    Passing each input catalog as part of the SCA asn file. This worked better
+    than creating a file listing the user-provided catalogs and passing this
+    with the `catfile` kwarg.
 
     Args:
-        visitstr
-        filt
-        save_results (bool): set to False to save time while iterating 
+        visitstr (str): String of program+observation+visit ID of images to run through TweakReg (for example: jw01345001001)
+        filt (str): Filter to run through TweakReg. All calibrated images with visitstr and filt will be grouped together
+        save_results (bool): If True, save results of fits by writing output *tweakreg.fits files. Set to False to save time while iterating 
+
+    Outputs:
+        [visitstr]_[filt]_nrc*.json - association files grouping input images
+            by NIRCam detector
+        tweakreg_[visitstr]_[filt]_nrc*.log - output log file from the relative
+            and absolute astrometric fits for this group of images
+        tweakreg_results_all.[viststr]_[filt].txt - overall output file 
+            summarizing the relative and absolute astrometric fits for all 
+            groups of images
     """
     # Set up the absolute astrometric reference catalog
     abs_refcat = os.path.join(CATDIR, ABS_REFCAT)
@@ -293,7 +301,7 @@ def run_tweakregstep(visitstr, filt, save_results):
         if (not sca in sca_list): sca_list.append(sca)
     sca_list.sort()
 
-    tweakreg_results = 'tweakreg_results_all.%s.txt' % visitstr
+    tweakreg_results = 'tweakreg_results_all.%s_%s.txt' % (visitstr, filt)
 
     results = []
     results.append('Absolute/Relative     Filename                                        NMATCH    RMSE(arcsec)  MAE(arcsec)   XSH(arcsec)   YSH(arcsec)   ROT(deg)      SCALE\n')
@@ -305,7 +313,6 @@ def run_tweakregstep(visitstr, filt, save_results):
         # we call tweakreg, different from before, but this is easier than 
         # editing the absolute astrometry from the extract_results function
         #sca_n += 1
-
         images = glob(os.path.join(IODIR,'%s*_%s*_%s.fits'%(visitstr,sca,
                                                                FILE_SUFFIX)))
         imgfile_list = sorted([x for x in images if fits.getheader(x)['FILTER'] == filt.upper()])
@@ -315,7 +322,7 @@ def run_tweakregstep(visitstr, filt, save_results):
         make_image_catalogs(imgfile_list, params)
        
         # Create asn file for visit
-        asn_name = '_'.join([visitstr, sca])
+        asn_name = '_'.join([visitstr, filt, sca])
         asn_file = '.'.join([asn_name, 'json'])
         if (not os.path.exists(asn_file)):
             asn = asn_from_list.asn_from_list(imgfile_list, 
@@ -352,7 +359,7 @@ def run_tweakregstep(visitstr, filt, save_results):
 #                        roundhi
 #                        brightest
 #                        peakmax
-                        bkg_boxsize         = int(params['bkg_boxsize']),
+#                        bkg_boxsize         = int(params['bkg_boxsize']),
                         ### Relative astrometry, optimize alignment order
                         enforce_user_order  = True,
                         ### Relative astrometry, reference catalog parameters
@@ -390,15 +397,15 @@ def run_tweakregstep(visitstr, filt, save_results):
 
         # Find log file to parse output
         # log filename is set in tweakreg-log.cfg
-        if (os.path.exists('tweakreg_out.log')):		
+        if (os.path.exists('tweakreg_out.log')):
             os.system('/bin/cp -p tweakreg_out.log  '+tweakreg_logfile)
             extract_results(tweakreg_logfile, imgfile_list, sca_n, results)
 
         if save_results:
             # save the tweaked WCS for assignment to other reduction versions
             for image in imgfile_list:
-                tweakimage = image.replace('%s.fits'%FILE_SUFFIX, 
-                                           '*tweakreg.fits')
+                tweakimage = os.path.basename(image).replace(
+                                          '%s.fits'%FILE_SUFFIX,'tweakreg.fits')
                 save_wcs(tweakimage)
 
     outfile = open(tweakreg_results,'w')
@@ -409,14 +416,14 @@ def run_tweakregstep(visitstr, filt, save_results):
 def main():
     parser = argparse.ArgumentParser(description='A wrapper for TweakReg')
     parser.add_argument('visitstr', type=str,
-                        help='String of ')
-    parser.add_argument('filt', type=str, 
+                        help='String of program+observation+visit ID of images to run through TweakReg (for example: jw01345001001)')
+    parser.add_argument('filt', type=str,
                         help='Filter to run through TweakReg. All calibrated images in IODIR with visitstr, FILE_SUFFIX and filt will be grouped together. Wrapper looks for config file called [filt].cfg.')
     parser.add_argument('--save_results', action='store_true',
                         help='Save results of fit. This takes extra time and is not recommended while iterating on parameters.')
     args = parser.parse_args()
 
-    run_tweakregstep(args.visitstr, args.filt, args.saveres)
+    run_tweakregstep(args.visitstr, args.filt, args.save_results)
 
 
 if __name__ == '__main__':

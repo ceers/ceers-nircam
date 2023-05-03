@@ -93,7 +93,7 @@ that are in the specified `INPUTDIR` directory. It will group them into
 associations for each detector, run Source Extractor to detect source 
 positions using the windowed centroid coordinates, prepare the input
 catalogs, invoke TweakReg, and parse the TweakReg output into an output file
-called `tweakreg_results_all.jw01345001001.txt`. 
+called `tweakreg_results_all.jw01345001001_f115w.txt`. 
 
 TweakReg will first perform a relative alignment (e.g., all A1 detector 
 images aligned with each other) and will then perform an absolute aligment 
@@ -112,36 +112,33 @@ saved to `INPUTDIR` with the input images:
 
 For each set of detector images (for example all detector A1 images from F115W),
 the following are saved in the working directory:
-* `jw01345003001_nrca1.json` - association files grouping all input images 
-  from the specified observation/visit (`jw01345003001`) and filter by 
-  NIRCam detector (`nrca1`)
-* `tweakreg_jw01345003001_nrca1.log` - output log file from the relative and 
-  absolute astrometric fits for this group of images
+* `jw01345003001_f115w_nrca1.json` - association files grouping all input 
+  images from the specified observation/visit (`jw01345003001`) and filter 
+  (`f115w`) by NIRCam detector (`nrca1`)
+* `tweakreg_jw01345003001_f115w_nrca1.log` - output log file from the relative 
+  and absolute astrometric fits for this group of images
 
 Overall output files saved in the working directory:
-* `tweakreg_results_all.jw01345003001.txt` - the overall output file 
+* `tweakreg_results_all.jw01345003001_f115w.txt` - the overall output file 
   summarizing the relative and absolute astrometric fits for all groups of 
   images
 * `tweakreg_out.log` - the TweakReg log file, which is overwritten each time 
   the wrapper calls TweakReg. This log file is copied to the detector-specific
-  log files (`tweakreg_jw01345003001_nrca1.log`) that are saved for reference.
-  The info for `tweakreg_results_all.jw013450*.txt` is extracted from this log 
-  file. 
+  log files (`tweakreg_jw01345003001_f115w_nrca1.log`) that are saved for 
+  reference. The info for `tweakreg_results_all.jw013450*.txt` is extracted 
+  from this log file. 
 
 
 The output file (`tweakreg_results_all.jw013450*.txt`) will summarize the X,Y 
 shifts, rotations and scalings of the relative and absolute astrometric fits 
 as well as the RMS of the alignments. To quickly view the results:
 ```
-grep Relative tweakreg_results_all.jw01345001001.txt | sort
-grep Absolute tweakreg_results_all.jw01345001001.txt | sort
+grep Relative tweakreg_results_all.jw01345001001_f115w.txt | sort
+grep Absolute tweakreg_results_all.jw01345001001_f115w.txt | sort
 ```
 
 **Note** - these output files (`jw013450*_nrc*.json`, `tweakreg_jw013450*_nrc*.log`, `tweakreg_results_all.jw013450*.txt`) will be overwritten each time you 
-call the wrapper. When you are happy with the fit for a filter, save the 
-outputs in a separate directory to avoid overwriting them with the next filter.
-This behavior is partially by design, to make sure each filter is run 
-through TweakReg separately.
+call the wrapper. 
 
 The wrapper requires a few files:
 
